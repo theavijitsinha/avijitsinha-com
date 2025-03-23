@@ -6,8 +6,9 @@
 }
 
 .logo {
-  height: 18em;
-  padding: 1.5em;
+  width: 56rem;
+  max-width: calc(100dvw - 7rem);
+  padding: 1.5rem;
 }
 
 .footer {

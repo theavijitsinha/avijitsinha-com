@@ -1,4 +1,5 @@
-import constructionGif from '/under-construction.gif'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+
 import githubLogo from '/github-logo.svg'
 import instagramLogo from '/instagram-logo.svg'
 import linkedinLogo from '/linkedin-logo.svg'
@@ -7,8 +8,16 @@ import './App.css'
 function App() {
   return (
     <>
-      <div>
-        <img src={constructionGif} className='logo' alt='Under construction' />
+      <div className='logo'>
+        <DotLottieReact
+          src="/construction.lottie"
+          loop
+          autoplay
+          style={{
+            width: "auto",
+            height: "auto",
+          }}
+        />
       </div>
       <h1>Under construction</h1>
       <div className='footer'>
