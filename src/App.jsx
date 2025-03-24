@@ -8,7 +8,7 @@ import './App.css'
 function App() {
   return (
     <>
-      <div className='logo'>
+      <div className='construction-gif'>
         <DotLottieReact
           src="/construction.lottie"
           loop
