@@ -1,6 +1,6 @@
 # Common account contract
 
-**Status: browser UI, browser-session API, internal service API, Music Training integration and Routine Dashboard integration are implemented and verified locally; deployment is not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
+**Status: browser UI, browser-session API, internal service API, Music Training integration and Routine Dashboard integration are implemented and verified locally; deployment is not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. The beta runtime/migration identities and empty regional secret containers are provisioned, but no database, secret value, image, service or route exists. This contract is not authorization for the remaining infrastructure or OAuth changes.
 
 ## Route ownership
 

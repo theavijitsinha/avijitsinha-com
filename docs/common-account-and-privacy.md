@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize account-service/Dashboard deployment, OAuth changes or cloud provisioning.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; beta identities and empty security containers are provisioned.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize account-service/Dashboard deployment, database provisioning, secret values or further OAuth changes.
 
 ## Outcomes
 

@@ -33,4 +33,4 @@ Apply migrations with a separate database owner connection:
 ACCOUNT_MIGRATION_DATABASE_URL=postgresql://... npm run migrate
 ```
 
-The runtime role must receive only `USAGE` on the `account_service` schema and `EXECUTE` on its seven API functions. It must not own or receive direct access to the account tables. Cloud identities, role grants, secrets and deployment are intentionally deferred to a reviewed infrastructure step.
+The runtime role must receive only `USAGE` on the `account_service` schema and `EXECUTE` on its seven API functions. It must not own or receive direct access to the account tables. The keyless beta runtime identity and shared migration identity now exist. Empty, region-pinned containers separately hold the future account runtime URL, migration URL and Firebase UID allowlist; each has only its intended identity as accessor. No secret version, database role, database or service deployment exists yet.
