@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training integration is next.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training uses the common account locally and Routine Dashboard integration is next.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
 
 ## Outcomes
 
@@ -101,7 +101,7 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 
 ### A3 — Service integrations
 
-- [ ] Replace Music Training's independent Firebase UI state with the common account API.
+- [x] Replace Music Training's independent Firebase UI state with the common account API.
 - [ ] Migrate Routine Dashboard from its app-specific session to common-session validation.
 - [ ] Preserve Routine Dashboard's separate Calendar OAuth state, consent, token and cache boundary.
 - [ ] Verify that a Music-only account has no Calendar connection or Calendar data rows.
@@ -130,6 +130,6 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 
 The existing Routine Dashboard app-specific session is tested but not yet deployed. Reuse its opaque-token hashing, rotation, inactivity, CSRF, Firebase verification and tenant tests where appropriate; do not deploy it as a second competing login system. Preserve its restricted beta admission until the common account service provides an equivalent gate.
 
-Music Training currently uses persistent client-side Firebase state and has no backend authorization boundary. Its former credential/identity logging and unused bearer helper have been removed, but its client state is not the common session design.
+Music Training now reads the minimal profile from `/api/account/me`, sends sign-in through `/account/`, and revokes the current common session through the CSRF-protected account endpoint. It contains no Firebase SDK or configuration, does not handle provider credentials, and keeps only training options in browser-local storage. The reverse proxy must still strip cookies before forwarding static Music requests while routing account API calls to the account service.
 
 No phase silently broadens Google scopes, makes Calendar mandatory, shares service tokens, weakens tenant scoping, trusts proxy identity headers, or publishes unfinished privacy claims.

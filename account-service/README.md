@@ -15,6 +15,8 @@ Internal routes accept only Google-signed OIDC tokens for the exact configured a
 
 The UI stores only the public Firebase configuration, server-normalized return path and one-time login challenge in tab-scoped session storage across the redirect. The Firebase ID token remains memory-only, is exchanged once, and Firebase client state is cleared immediately. Profile values are inserted as text rather than HTML. The packaged route sets a restrictive CSP and anti-framing, referrer, MIME-sniffing and permissions headers.
 
+Music Training initializes its common session with `/api/account/me` and uses the exact return path `/music/training/intervals`. Include that path in `ACCOUNT_ALLOWED_RETURN_PATHS` for environments that expose Music Training.
+
 ## Runtime configuration
 
 The web process requires `ACCOUNT_DATABASE_URL`, the four `ACCOUNT_FIREBASE_*` browser values, `ACCOUNT_ALLOWED_FIREBASE_UIDS`, `ACCOUNT_ALLOWED_ORIGINS`, `ACCOUNT_ALLOWED_RETURN_PATHS`, `ACCOUNT_INTERNAL_AUDIENCE` and `ACCOUNT_DASHBOARD_SERVICE_ACCOUNT_EMAIL`. Comma-separated values are parsed as exact entries. `PORT` defaults to `8080`. Production and beta must supply separate reviewed values and backing databases.

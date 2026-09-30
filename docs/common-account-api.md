@@ -1,6 +1,6 @@
 # Common account contract
 
-**Status: browser UI, browser-session API and internal service API implemented and verified locally; service integration and deployment are not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, match-only provider binding and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
+**Status: browser UI, browser-session API, internal service API and Music Training's browser integration are implemented and verified locally; Dashboard integration and deployment are not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, match-only provider binding and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
 
 ## Route ownership
 
@@ -34,6 +34,8 @@ The first four endpoints are implemented locally. Logout-all, data inventory and
 The sign-in page accepts a return destination only from a server-owned allowlist of exact local application paths. The normalized destination is stored with the single-use login challenge; the callback never redirects to a browser-supplied absolute URL.
 
 The implemented page calls `/me` before rendering account state so active sessions receive rotation, uses tab-scoped session storage only for the public Firebase configuration and one-time challenge across redirect, keeps the Firebase ID token in memory, exchanges it once, signs out of Firebase immediately and follows only the server-returned normalized path. Common sign-in requests no Calendar or Tasks scope.
+
+Music Training also calls `/me` at initialization, accepts only the minimal validated browser profile, and uses the exact allowlisted return path `/music/training/intervals`. Its sign-in control navigates to `/account/`; its sign-out control echoes the host CSRF cookie only to the common logout endpoint. The static application contains no Firebase SDK, provider configuration, credential handling or Calendar/Tasks integration.
 
 ## Cookies and CSRF
 

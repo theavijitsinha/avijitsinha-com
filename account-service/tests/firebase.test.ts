@@ -58,8 +58,8 @@ describe("account input policies", () => {
     expect(origins.allows("https://avijitsinha.com/path")).toBe(false);
     expect(origins.allows("https://beta.avijitsinha.com")).toBe(false);
 
-    const paths = new ReturnPathPolicy(["/", "/music/training/", "/routine/dashboard/"]);
-    expect(paths.resolve("/music/training/")).toBe("/music/training/");
+    const paths = new ReturnPathPolicy(["/", "/music/training/intervals", "/routine/dashboard/"]);
+    expect(paths.resolve("/music/training/intervals")).toBe("/music/training/intervals");
     expect(paths.resolve("https://attacker.example/")).toBe("/");
     expect(paths.resolve("//attacker.example/")).toBe("/");
   });

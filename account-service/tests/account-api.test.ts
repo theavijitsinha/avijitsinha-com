@@ -59,7 +59,7 @@ async function fixture(verifierIdentity: VerifiedGoogleIdentity = identity): Pro
     verifier,
     sessions,
     origins: new ExactOriginPolicy([origin]),
-    returnPaths: new ReturnPathPolicy(["/", "/music/training/", "/routine/dashboard/"]),
+    returnPaths: new ReturnPathPolicy(["/", "/music/training/intervals", "/routine/dashboard/"]),
     firebase: {
       apiKey: "public-api-key",
       authDomain: "avijitsinha.com",
@@ -87,7 +87,7 @@ describe("common account browser API", () => {
   it("exchanges a single-use challenge, replaces fixation state and exposes no stable identifier", async () => {
     const value = await fixture();
     const prior = await value.sessions.create(identity, null, now - 1_000);
-    const login = await challenge(value.baseUrl, "/music/training/");
+    const login = await challenge(value.baseUrl, "/music/training/intervals");
 
     const mismatch = await fetch(`${value.baseUrl}/api/account/session`, {
       method: "POST",
@@ -107,7 +107,7 @@ describe("common account browser API", () => {
       body: JSON.stringify({ idToken: "synthetic-firebase-token", challenge: login.value }),
     });
     expect(response.status).toBe(201);
-    expect(await response.json()).toEqual({ returnPath: "/music/training/" });
+    expect(await response.json()).toEqual({ returnPath: "/music/training/intervals" });
     expect(value.verifier.verify).toHaveBeenCalledWith("synthetic-firebase-token", now);
 
     const cookies = setCookies(response);
@@ -123,14 +123,14 @@ describe("common account browser API", () => {
     expect(csrfCookie).toContain("SameSite=Lax");
     expect(await value.sessions.resolve(prior.token, null, false, now)).toBeNull();
 
-    const me = await fetch(`${value.baseUrl}/api/account/me?userId=attacker-controlled&return=${encodeURIComponent("/music/training/")}`, {
+    const me = await fetch(`${value.baseUrl}/api/account/me?userId=attacker-controlled&return=${encodeURIComponent("/music/training/intervals")}`, {
       headers: { Cookie: cookiePair(response, SESSION_COOKIE) },
     });
     expect(me.status).toBe(200);
     const profile = await me.json() as Record<string, unknown>;
     expect(profile).toMatchObject({
       profile: { email: identity.email, displayName: identity.displayName, pictureUrl: identity.pictureUrl },
-      returnPath: "/music/training/",
+      returnPath: "/music/training/intervals",
     });
     const serialized = JSON.stringify(profile);
     expect(serialized).not.toContain(identity.firebaseUid);
