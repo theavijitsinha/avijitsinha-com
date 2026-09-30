@@ -9,7 +9,7 @@ The approved direction adds two site-wide responsibilities here:
 
 Common sign-in provides identity only. Music Training does not require Calendar access. Routine Dashboard requests its separate read-only Calendar authorization only when a signed-in user explicitly connects that feature.
 
-See the [common account and privacy plan](docs/common-account-and-privacy.md) for the architecture, security boundaries and incremental execution order. That plan is not deployment authorization, and no provisional policy text should be published as final.
+See the [common account and privacy plan](docs/common-account-and-privacy.md) for the architecture and execution order, and the [common account contract](docs/common-account-api.md) for the browser API, internal validation, sessions and persistence boundary. These documents are not deployment authorization, and no provisional policy text should be published as final.
 
 ## Local development
 

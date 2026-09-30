@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: architecture direction approved; implementation has not started.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
+**Status: architecture and contracts approved; account-service implementation has not started.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
 
 ## Outcomes
 
@@ -79,14 +79,14 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 
 - [x] Approve the common-account/service-specific-authorization boundary.
 - [x] Choose a site-wide policy with separate service sections.
-- [ ] Remove credential/token logging from Music Training and verify its current sign-in behavior.
+- [x] Remove credential/token logging and the unused browser bearer-token helper from Music Training; verify its current sign-in build.
 - [x] Freeze new app-specific login/session designs while the common contract is implemented.
 
 ### A1 — Common account contract
 
-- [ ] Specify public account endpoints, internal session validation, generic errors and profile minimization.
-- [ ] Specify the PostgreSQL user/session schema, 30-day inactivity, rotation, revocation and CSRF behavior.
-- [ ] Define service identity authentication and exact audiences for internal validation.
+- [x] Specify public account endpoints, internal session validation, generic errors and profile minimization in [the account contract](common-account-api.md).
+- [x] Specify the PostgreSQL user/session schema, 30-day inactivity, rotation, revocation and CSRF behavior.
+- [x] Define service identity authentication and exact audiences for internal validation.
 - [ ] Add synthetic tests for fixation, replay, revocation, cross-service confusion and tenant spoofing.
 
 ### A2 — Local account service
