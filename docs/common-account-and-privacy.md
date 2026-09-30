@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account browser/session core implemented; internal service validation is next.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
+**Status: local common-account browser/session and internal validation cores implemented; browser account UI is next.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
 
 ## Outcomes
 
@@ -88,15 +88,16 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 - [x] Specify the PostgreSQL user/session schema, 30-day inactivity, rotation, revocation and CSRF behavior.
 - [x] Define service identity authentication and exact audiences for internal validation.
 - [x] Add synthetic tests for fixation, replay, revocation and browser tenant-identifier spoofing.
-- [ ] Add exact-audience internal OIDC tests for public callers and cross-service confusion.
+- [x] Add exact-audience internal OIDC tests for public callers and cross-service confusion.
 
 ### A2 — Local account service
 
 - [x] Add a separately packaged account service owned by this repository.
 - [x] Reuse Firebase Google sign-in for identity only and verify ID tokens server-side.
 - [x] Issue the opaque host-wide session and implement `/me` and current-session logout.
-- [ ] Implement exact-audience service authentication and internal session validation.
+- [x] Implement exact-audience service authentication, internal session validation and Dashboard-only provider-subject matching.
 - [x] Keep beta admission restricted to the reviewed Firebase UID allowlist.
+- [ ] Add the `/account/` Firebase redirect UI that establishes the common session and calls `/me` on initialization.
 
 ### A3 — Service integrations
 

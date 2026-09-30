@@ -23,8 +23,15 @@ export interface AccountSessionStore {
   issueLoginChallenge(returnPath: string, now: number): Promise<string>;
   consumeLoginChallenge(token: string, now: number): Promise<string | null>;
   create(identity: VerifiedGoogleIdentity, previousBrowserToken: string | null, now: number): Promise<CreatedSession>;
-  resolve(token: string, csrfToken: string | null, requireCsrf: boolean, now: number): Promise<ResolvedSession | null>;
+  resolve(
+    token: string,
+    csrfToken: string | null,
+    requireCsrf: boolean,
+    now: number,
+    allowRotation?: boolean,
+  ): Promise<ResolvedSession | null>;
   revoke(token: string, csrfToken: string, now: number): Promise<boolean>;
+  matchesGoogleSubject(userId: string, googleSubject: string): Promise<boolean>;
 }
 
 interface SessionRow {
@@ -114,7 +121,13 @@ export class PostgresAccountSessionStore implements AccountSessionStore {
     return { token: sessionToken, csrfToken };
   }
 
-  async resolve(tokenValue: string, csrfToken: string | null, requireCsrf: boolean, now: number): Promise<ResolvedSession | null> {
+  async resolve(
+    tokenValue: string,
+    csrfToken: string | null,
+    requireCsrf: boolean,
+    now: number,
+    allowRotation = true,
+  ): Promise<ResolvedSession | null> {
     const currentHash = hash(tokenValue)!;
     return this.#transaction(async client => {
       const result = await client.query<SessionRow>(`
@@ -125,7 +138,7 @@ export class PostgresAccountSessionStore implements AccountSessionStore {
 
       let replacementToken: string | null = null;
       let replacementCsrfToken: string | null = null;
-      if (!row.matched_previous_token && row.rotated_at.getTime() <= now - ROTATION_AGE_MS) {
+      if (allowRotation && !row.matched_previous_token && row.rotated_at.getTime() <= now - ROTATION_AGE_MS) {
         const candidateToken = token();
         const candidateCsrf = token();
         const rotated = await client.query<{ rotated: boolean }>(`
@@ -157,6 +170,15 @@ export class PostgresAccountSessionStore implements AccountSessionStore {
         SELECT account_service.revoke_session($1, $2, $3) AS revoked
       `, [hash(tokenValue), hash(csrfToken), new Date(now)]);
       return result.rows[0]?.revoked === true;
+    });
+  }
+
+  async matchesGoogleSubject(userId: string, googleSubject: string): Promise<boolean> {
+    return this.#transaction(async client => {
+      const result = await client.query<{ matches: boolean }>(`
+        SELECT account_service.google_subject_matches($1, $2) AS matches
+      `, [userId, googleSubject]);
+      return result.rows[0]?.matches === true;
     });
   }
 }

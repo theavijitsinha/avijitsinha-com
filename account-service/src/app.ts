@@ -1,8 +1,10 @@
 import express, { type Express } from "express";
 import { mountAccountRoutes, type AccountController } from "./auth/controller.js";
+import { mountInternalAccountRoutes, type InternalAccountController } from "./internal/controller.js";
 
 export interface AppOptions {
   readonly controller: AccountController;
+  readonly internal?: InternalAccountController;
   readonly healthy?: () => Promise<boolean>;
 }
 
@@ -17,6 +19,7 @@ export function createApp(options: AppOptions): Express {
   });
 
   mountAccountRoutes(app, options.controller);
+  if (options.internal !== undefined) mountInternalAccountRoutes(app, options.internal);
   app.get("/healthz", (_request, response, next) => {
     void (options.healthy?.() ?? Promise.resolve(true)).then(healthy => {
       response.status(healthy ? 200 : 503).json({ status: healthy ? "healthy" : "unavailable" });

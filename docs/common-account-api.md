@@ -1,6 +1,6 @@
 # Common account contract
 
-**Status: browser-session core implemented and verified locally; internal service API and deployment are not implemented.** The separately packaged account service now implements the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
+**Status: browser-session and internal service APIs implemented and verified locally; browser UI, service integration and deployment are not implemented.** The separately packaged account service implements the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, match-only provider binding and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
 
 ## Route ownership
 
@@ -51,7 +51,7 @@ The browser sends a `Path=/` cookie on requests throughout the host. The reverse
 
 ## Internal service API
 
-**Not implemented yet.** This is the next local account-service slice and remains the gate before Routine Dashboard integration.
+**Implemented locally; not yet called by a service.** Routine Dashboard remains on its interim dashboard-owned session until a separate integration slice.
 
 Internal requests use the service's dedicated Google-signed OIDC identity token in `Authorization: Bearer ...`. The account service verifies signature, issuer, expiry, exact configured audience, verified email and an exact allowlist of service accounts. It does not trust `X-Forwarded-*`, caller-supplied service names or public proxy headers as service identity.
 
@@ -81,6 +81,8 @@ For safe methods, `origin` and `csrfToken` are `null`. For mutations, the callin
 ```
 
 The opaque internal UUID is never returned by the browser API. Internal validation returns no email, Firebase UID, provider subject, token hash or authorization grant. A caller maps `siteUserId` to its own tenant record and still enforces its own authorization and row isolation.
+
+Internal validation refreshes inactivity but deliberately does not rotate browser cookies, because a backend response cannot replace the browser's host-only cookie safely. Each browser application must call `/api/account/me` during initialization; that browser endpoint performs periodic joint session/CSRF rotation and resets cookie lifetime.
 
 For `google-subjects:matches`, Routine Dashboard first verifies the Calendar ID token's signature, issuer, expiry, nonce and exact client audience. It sends only the resulting `sub` over the authenticated internal channel together with the site session. The account service returns `{ "matches": true }` or `{ "matches": false }`; neither side logs the subject. No other service may call this operation.
 
@@ -114,10 +116,10 @@ The account service never receives Calendar or Tasks access/refresh tokens. Comm
 - [x] beta allowlist denial before user/session persistence;
 - [x] session fixation replacement, hash-only storage, rotation grace, idle expiry and logout;
 - [x] exact-origin and session-bound CSRF failure for implemented mutations;
-- [ ] wrong issuer/audience/email, public caller and cross-service internal-operation denial for the internal API;
+- [x] wrong issuer/audience/email, public caller and cross-service internal-operation denial for the internal API;
 - [x] no browser-visible internal/provider identifiers in implemented responses and no sensitive application logging;
 - [ ] Music-only sign-in creates no Calendar grant or Dashboard data;
 - [ ] Calendar subject mismatch fails without revealing either subject;
 - [ ] beta and production cookies and data cannot authenticate each other.
 
-No service integration begins until the remaining internal-boundary tests are executable. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets and internal audience.
+Service integration may now proceed one service at a time against the synthetic internal boundary. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets and internal audience.

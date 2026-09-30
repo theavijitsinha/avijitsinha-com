@@ -6,20 +6,33 @@ import { FirebaseAdminTokenVerifier } from "./auth/firebase.js";
 import { PostgresAccountSessionStore } from "./auth/session-store.js";
 import { loadConfiguration } from "./config.js";
 import { ExactOriginPolicy, ReturnPathPolicy } from "./http/policy.js";
+import { GoogleInternalCallerVerifier } from "./internal/caller.js";
+import { InternalAccountController } from "./internal/controller.js";
 
 export async function main(): Promise<void> {
   const configuration = loadConfiguration();
   const pool = new Pool({ connectionString: configuration.databaseUrl, max: 10 });
+  const sessions = new PostgresAccountSessionStore(pool);
+  const origins = new ExactOriginPolicy(configuration.allowedOrigins);
   const controller = new AccountController({
     verifier: new FirebaseAdminTokenVerifier(configuration.firebase.projectId),
-    sessions: new PostgresAccountSessionStore(pool),
-    origins: new ExactOriginPolicy(configuration.allowedOrigins),
+    sessions,
+    origins,
     returnPaths: new ReturnPathPolicy(configuration.allowedReturnPaths),
     firebase: configuration.firebase,
     allowedFirebaseUids: configuration.allowedFirebaseUids,
   });
+  const internal = new InternalAccountController({
+    callers: new GoogleInternalCallerVerifier(configuration.internalAudience, [{
+      service: "routine-dashboard",
+      email: configuration.dashboardServiceAccountEmail,
+    }]),
+    sessions,
+    origins,
+  });
   const app = createApp({
     controller,
+    internal,
     healthy: async () => {
       try {
         await pool.query("SELECT 1");

@@ -160,6 +160,7 @@ export class MemoryAccountSessionStore implements AccountSessionStore {
     csrfToken: string | null,
     requireCsrf: boolean,
     now: number,
+    allowRotation = true,
   ): Promise<ResolvedSession | null> {
     const tokenHash = hash(tokenValue);
     const session = [...this.#sessions.values()].find(candidate => (
@@ -180,7 +181,7 @@ export class MemoryAccountSessionStore implements AccountSessionStore {
 
     let replacementToken: string | null = null;
     let replacementCsrfToken: string | null = null;
-    if (!matchedPrevious && session.rotatedAt <= now - 7 * DAY) {
+    if (allowRotation && !matchedPrevious && session.rotatedAt <= now - 7 * DAY) {
       replacementToken = token();
       replacementCsrfToken = token();
       session.previousTokenHash = session.tokenHash;
@@ -217,5 +218,11 @@ export class MemoryAccountSessionStore implements AccountSessionStore {
     if (session === undefined) return false;
     session.revokedAt = now;
     return true;
+  }
+
+  async matchesGoogleSubject(userId: string, googleSubject: string): Promise<boolean> {
+    return [...this.#users.values()].some(user => (
+      user.id === userId && user.googleProviderSubject === googleSubject
+    ));
   }
 }

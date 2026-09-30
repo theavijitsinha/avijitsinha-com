@@ -43,7 +43,7 @@ postgresDescribe("PostgreSQL account persistence", () => {
     const migrations = await pool.query<{ count: number }>(
       "SELECT count(*)::INTEGER AS count FROM account_schema_migrations",
     );
-    expect(migrations.rows).toEqual([{ count: 1 }]);
+    expect(migrations.rows).toEqual([{ count: 2 }]);
     const tables = await pool.query<{ table_name: string }>(`
       SELECT table_name
       FROM information_schema.tables
@@ -89,6 +89,8 @@ postgresDescribe("PostgreSQL account persistence", () => {
     const rotated = await store.resolve(created.token, created.csrfToken, true, now);
     expect(rotated?.replacementToken).toBeTruthy();
     expect(rotated?.replacementCsrfToken).toBeTruthy();
+    expect(await store.matchesGoogleSubject(rotated!.userId, identity.googleProviderSubject)).toBe(true);
+    expect(await store.matchesGoogleSubject(rotated!.userId, "different-google-user")).toBe(false);
     expect(await store.resolve(created.token, null, false, now + 4 * 60 * 1_000)).not.toBeNull();
     expect(await store.resolve(created.token, created.csrfToken, true, now + 4 * 60 * 1_000)).toBeNull();
     expect(await store.resolve(created.token, null, false, now + 5 * 60 * 1_000)).toBeNull();

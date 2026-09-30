@@ -16,6 +16,7 @@ interface AppliedMigration {
 
 const migrationFiles = [
   { id: 1, name: "account_sessions", file: "001_account_sessions.sql" },
+  { id: 2, name: "google_subject_match", file: "002_google_subject_match.sql" },
 ] as const;
 
 export function loadMigrations(): readonly Migration[] {

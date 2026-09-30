@@ -8,6 +8,8 @@ export interface AccountConfiguration {
   readonly allowedFirebaseUids: readonly string[];
   readonly allowedOrigins: readonly string[];
   readonly allowedReturnPaths: readonly string[];
+  readonly internalAudience: string;
+  readonly dashboardServiceAccountEmail: string;
 }
 
 function required(name: string): string {
@@ -38,5 +40,7 @@ export function loadConfiguration(): AccountConfiguration {
     allowedFirebaseUids: parseFirebaseUidAllowlist(process.env.ACCOUNT_ALLOWED_FIREBASE_UIDS),
     allowedOrigins: commaSeparated("ACCOUNT_ALLOWED_ORIGINS"),
     allowedReturnPaths: commaSeparated("ACCOUNT_ALLOWED_RETURN_PATHS"),
+    internalAudience: required("ACCOUNT_INTERNAL_AUDIENCE"),
+    dashboardServiceAccountEmail: required("ACCOUNT_DASHBOARD_SERVICE_ACCOUNT_EMAIL"),
   };
 }
