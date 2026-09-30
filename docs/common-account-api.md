@@ -1,6 +1,6 @@
 # Common account contract
 
-**Status: browser UI, browser-session API, internal service API and Music Training's browser integration are implemented and verified locally; Dashboard integration and deployment are not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, match-only provider binding and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
+**Status: browser UI, browser-session API, internal service API, Music Training integration and Routine Dashboard integration are implemented and verified locally; deployment is not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
 
 ## Route ownership
 
@@ -55,7 +55,7 @@ The browser sends a `Path=/` cookie on requests throughout the host. The reverse
 
 ## Internal service API
 
-**Implemented locally; not yet called by a service.** Routine Dashboard remains on its interim dashboard-owned session until a separate integration slice.
+**Implemented and consumed locally by Routine Dashboard.** Dashboard has removed its Firebase client/Admin dependencies and app-specific login/session routes. Music Training continues to use only the browser API.
 
 Internal requests use the service's dedicated Google-signed OIDC identity token in `Authorization: Bearer ...`. The account service verifies signature, issuer, expiry, exact configured audience, verified email and an exact allowlist of service accounts. It does not trust `X-Forwarded-*`, caller-supplied service names or public proxy headers as service identity.
 
@@ -72,11 +72,12 @@ The initial contract has two operations:
 {
   "method": "GET",
   "origin": null,
-  "csrfToken": null
+  "csrfToken": null,
+  "requireRecentAuthentication": false
 }
 ```
 
-For safe methods, `origin` and `csrfToken` are `null`. For mutations, the calling service forwards the browser's exact method, `Origin` and `X-CSRF-Token`; the account service validates all three. The caller is trusted only for this forwarding after its service identity passes. The response is:
+For safe methods, `origin` and `csrfToken` are `null` and recent authentication cannot be requested. For mutations, the calling service forwards the browser's exact method, `Origin` and `X-CSRF-Token`; the account service validates all three. A sensitive mutation such as starting a new Calendar grant sets `requireRecentAuthentication` to `true`; the account service enforces the ten-minute window without returning an authentication timestamp. The caller is trusted only for this forwarding after its service identity passes. The response is:
 
 ```json
 {
@@ -122,8 +123,8 @@ The account service never receives Calendar or Tasks access/refresh tokens. Comm
 - [x] exact-origin and session-bound CSRF failure for implemented mutations;
 - [x] wrong issuer/audience/email, public caller and cross-service internal-operation denial for the internal API;
 - [x] no browser-visible internal/provider identifiers in implemented responses and no sensitive application logging;
-- [ ] Music-only sign-in creates no Calendar grant or Dashboard data;
-- [ ] Calendar subject mismatch fails without revealing either subject;
+- [x] Music-only sign-in has no Dashboard call and therefore creates no Calendar grant or Dashboard row; the first authorized Dashboard visit creates only a minimal tenant mapping;
+- [x] Calendar subject mismatch fails without revealing either subject;
 - [ ] beta and production cookies and data cannot authenticate each other.
 
-Service integration may now proceed one service at a time against the synthetic internal boundary. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets and internal audience.
+Local service integration is complete. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets, internal audience and account/dashboard rollout order.

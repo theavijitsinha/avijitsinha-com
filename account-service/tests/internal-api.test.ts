@@ -94,7 +94,7 @@ describe("internal account API", () => {
   it("denies public, invalid and cross-service callers before session authorization", async () => {
     const value = await fixture();
     const cookie = `${SESSION_COOKIE}=${value.session.token}`;
-    const body = { method: "GET", origin: null, csrfToken: null };
+    const body = { method: "GET", origin: null, csrfToken: null, requireRecentAuthentication: false };
 
     expect((await post(value.baseUrl, "/internal/account/sessions:authorize", null, cookie, body)).status).toBe(401);
     expect((await post(value.baseUrl, "/internal/account/sessions:authorize", "invalid", cookie, body)).status).toBe(403);
@@ -108,6 +108,7 @@ describe("internal account API", () => {
       method: "GET",
       origin: null,
       csrfToken: null,
+      requireRecentAuthentication: false,
     });
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ siteUserId: value.siteUserId });
@@ -116,6 +117,7 @@ describe("internal account API", () => {
       method: "GET",
       origin: null,
       csrfToken: null,
+      requireRecentAuthentication: false,
       siteUserId: "attacker-selected",
     });
     expect(spoof.status).toBe(400);
@@ -125,6 +127,7 @@ describe("internal account API", () => {
       method: "GET",
       origin: null,
       csrfToken: null,
+      requireRecentAuthentication: false,
     });
     expect(missing.status).toBe(401);
   });
@@ -133,12 +136,18 @@ describe("internal account API", () => {
     const createdAt = now - 7 * 24 * 60 * 60 * 1_000;
     const value = await fixture(createdAt);
     const cookie = `${SESSION_COOKIE}=${value.session.token}; ${CSRF_COOKIE}=${value.session.csrfToken}`;
-    const validBody = { method: "POST", origin: browserOrigin, csrfToken: value.session.csrfToken };
+    const validBody = {
+      method: "POST",
+      origin: browserOrigin,
+      csrfToken: value.session.csrfToken,
+      requireRecentAuthentication: false,
+    };
 
     const safe = await post(value.baseUrl, "/internal/account/sessions:authorize", "dashboard-token", cookie, {
       method: "GET",
       origin: null,
       csrfToken: null,
+      requireRecentAuthentication: false,
     });
     expect(safe.status).toBe(200);
     expect(safe.headers.get("set-cookie")).toBeNull();
@@ -165,7 +174,23 @@ describe("internal account API", () => {
       method: "GET",
       origin: browserOrigin,
       csrfToken: value.session.csrfToken,
+      requireRecentAuthentication: false,
     })).status).toBe(400);
+  });
+
+  it("enforces recent authentication for sensitive mutations without returning its timestamp", async () => {
+    const value = await fixture(now - 11 * 60_000);
+    const cookie = `${SESSION_COOKIE}=${value.session.token}; ${CSRF_COOKIE}=${value.session.csrfToken}`;
+    const response = await post(value.baseUrl, "/internal/account/sessions:authorize", "dashboard-token", cookie, {
+      method: "POST",
+      origin: browserOrigin,
+      csrfToken: value.session.csrfToken,
+      requireRecentAuthentication: true,
+    });
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({
+      error: { code: "request_denied", message: "Session authorization request could not be verified." },
+    });
   });
 
   it("allows only Dashboard to compare its session user with a bounded provider subject", async () => {

@@ -20,6 +20,8 @@ const DASHBOARD_SERVICE = "routine-dashboard";
 const SAFE_METHODS = new Set(["GET", "HEAD"]);
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const CONTROL_CHARACTER = /[\u0000-\u001f\u007f]/;
+const RECENT_AUTHENTICATION_MS = 10 * 60_000;
+const FUTURE_CLOCK_SKEW_MS = 60_000;
 
 function error(response: Response, status: number, code: string, message: string): void {
   response.status(status).json({ error: { code, message } });
@@ -79,25 +81,29 @@ export class InternalAccountController {
     }
 
     const body = bodyRecord(request);
-    if (body === null || !hasExactKeys(body, ["csrfToken", "method", "origin"])) {
+    if (body === null || !hasExactKeys(body, ["csrfToken", "method", "origin", "requireRecentAuthentication"])) {
       error(response, 400, "request_denied", "Session authorization request is invalid.");
       return;
     }
     const method = body.method;
-    if (typeof method !== "string" || (!SAFE_METHODS.has(method) && !MUTATION_METHODS.has(method))) {
+    if (
+      typeof method !== "string"
+      || (!SAFE_METHODS.has(method) && !MUTATION_METHODS.has(method))
+      || typeof body.requireRecentAuthentication !== "boolean"
+      || (SAFE_METHODS.has(method) && body.requireRecentAuthentication)
+    ) {
       error(response, 400, "request_denied", "Session authorization request is invalid.");
-      return;
-    }
-
-    const session = await this.#session(request);
-    if (session === null) {
-      error(response, 401, "authentication_required", "A valid site session is required.");
       return;
     }
 
     if (SAFE_METHODS.has(method)) {
       if (body.origin !== null || body.csrfToken !== null) {
         error(response, 400, "request_denied", "Session authorization request is invalid.");
+        return;
+      }
+      const session = await this.#session(request);
+      if (session === null) {
+        error(response, 401, "authentication_required", "A valid site session is required.");
         return;
       }
       response.json({ siteUserId: session.userId });
@@ -119,8 +125,24 @@ export class InternalAccountController {
       return;
     }
     const token = parseCookies(request)[SESSION_COOKIE]!;
+    const session = await this.#session(request);
+    if (session === null) {
+      error(response, 401, "authentication_required", "A valid site session is required.");
+      return;
+    }
     const mutationSession = await this.#sessions.resolve(token, csrfToken, true, this.#clock(), false);
     if (mutationSession === null || mutationSession.userId !== session.userId) {
+      error(response, 403, "request_denied", "Session authorization request could not be verified.");
+      return;
+    }
+    const now = this.#clock();
+    if (
+      body.requireRecentAuthentication
+      && (
+        mutationSession.lastAuthenticatedAt > now + FUTURE_CLOCK_SKEW_MS
+        || now - mutationSession.lastAuthenticatedAt > RECENT_AUTHENTICATION_MS
+      )
+    ) {
       error(response, 403, "request_denied", "Session authorization request could not be verified.");
       return;
     }
