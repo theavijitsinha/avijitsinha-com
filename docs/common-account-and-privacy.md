@@ -77,6 +77,8 @@ The initial policy makes only bounded commitments supported by the beta design: 
 
 Publication on 2026-09-30 deployed website revision `avijitsinha-com-00005-jt6` and compatible Music Training revision `music-training-00012-6v9`, each at 100% traffic with internal ingress preserved behind the existing reverse proxy. Public verification returned HTTPS `200` for the homepage and exact policy URL, rendered the policy in a real browser, confirmed its Google Limited Use and deletion disclosures, and confirmed the Music bundle contains the policy link without the prior credential-log or third-party fallback-avatar behavior. This publication did not deploy the account service or Routine Dashboard.
 
+The user then confirmed that the shared Google Auth Platform app name `avijitsinha.com` passed brand verification and the branding was published with the live homepage and privacy-policy URLs. Calendar Data Access review and the separate Dashboard OAuth client remain later gates; brand publication did not grant Calendar access or deploy another service.
+
 ## Incremental execution plan
 
 ### A0 — Architecture and immediate safety
