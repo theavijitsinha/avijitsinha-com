@@ -3,8 +3,9 @@ FROM node:22.14.0-alpine3.21 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
-COPY tsconfig.json tsconfig.build.json ./
+COPY tsconfig.json tsconfig.build.json tsconfig.client.json vite.config.ts vitest.config.ts ./
 COPY src ./src
+COPY client ./client
 COPY migrations ./migrations
 RUN npm run build && npm prune --omit=dev
 
@@ -15,6 +16,7 @@ WORKDIR /app
 COPY --from=build /app/package.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/build ./build
+COPY --from=build /app/client-dist ./client-dist
 COPY --from=build /app/migrations ./migrations
 USER node
 EXPOSE 8080

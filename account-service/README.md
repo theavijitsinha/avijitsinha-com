@@ -1,6 +1,6 @@
 # Common account service
 
-This separately deployable service owns the common `avijitsinha.com` user and browser-session boundary. The current local slice implements identity-only Firebase token exchange, restricted beta admission, opaque host-wide sessions, `/me`, logout, authenticated internal session validation, Dashboard-only provider-subject matching and PostgreSQL migrations. It does not request Calendar or Tasks access and is not deployed.
+This separately deployable service owns the common `avijitsinha.com` user and browser-session boundary. The current local slice implements the `/account/` Firebase redirect UI, identity-only token exchange, restricted beta admission, opaque host-wide sessions, `/me`, logout, authenticated internal session validation, Dashboard-only provider-subject matching and PostgreSQL migrations. It does not request Calendar or Tasks access and is not deployed.
 
 ## Verify locally
 
@@ -9,9 +9,11 @@ npm ci
 npm run check
 ```
 
-The credential-free tests use an in-memory store and synthetic Firebase/OIDC claims. They do not contact Firebase, Google or PostgreSQL. Production startup requires explicit Firebase, origin, admission, internal audience, Dashboard service-account and database configuration; it fails closed when any required value is absent.
+The 27 credential-free tests use an in-memory store and synthetic Firebase/OIDC claims. They cover account-page initialization, redirect exchange, server-normalized continuation, logout, generic failures and static security headers without contacting Firebase, Google or PostgreSQL. Production startup requires explicit Firebase, origin, admission, internal audience, Dashboard service-account and database configuration; it fails closed when any required value is absent.
 
 Internal routes accept only Google-signed OIDC tokens for the exact configured audience and allowlisted service account. Routine Dashboard is currently the only registered caller. Internal validation does not rotate browser cookies; each browser application must call `/api/account/me` during initialization so active sessions receive their periodic cookie rotation.
+
+The UI stores only the public Firebase configuration, server-normalized return path and one-time login challenge in tab-scoped session storage across the redirect. The Firebase ID token remains memory-only, is exchanged once, and Firebase client state is cleared immediately. Profile values are inserted as text rather than HTML. The packaged route sets a restrictive CSP and anti-framing, referrer, MIME-sniffing and permissions headers.
 
 ## Runtime configuration
 

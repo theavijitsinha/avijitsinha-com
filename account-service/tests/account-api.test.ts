@@ -123,13 +123,14 @@ describe("common account browser API", () => {
     expect(csrfCookie).toContain("SameSite=Lax");
     expect(await value.sessions.resolve(prior.token, null, false, now)).toBeNull();
 
-    const me = await fetch(`${value.baseUrl}/api/account/me?userId=attacker-controlled`, {
+    const me = await fetch(`${value.baseUrl}/api/account/me?userId=attacker-controlled&return=${encodeURIComponent("/music/training/")}`, {
       headers: { Cookie: cookiePair(response, SESSION_COOKIE) },
     });
     expect(me.status).toBe(200);
     const profile = await me.json() as Record<string, unknown>;
     expect(profile).toMatchObject({
       profile: { email: identity.email, displayName: identity.displayName, pictureUrl: identity.pictureUrl },
+      returnPath: "/music/training/",
     });
     const serialized = JSON.stringify(profile);
     expect(serialized).not.toContain(identity.firebaseUid);

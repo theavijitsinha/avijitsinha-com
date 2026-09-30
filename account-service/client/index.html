@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Sign in to services on avijitsinha.com." />
+    <title>Account · avijitsinha.com</title>
+  </head>
+  <body>
+    <main class="account-shell">
+      <a class="home-link" href="/" aria-label="Back to avijitsinha.com">avijitsinha.com</a>
+
+      <section class="account-card" data-loading aria-labelledby="loading-title">
+        <p class="eyebrow">Site account</p>
+        <h1 id="loading-title">Checking your session…</h1>
+        <p class="status" role="status" aria-live="polite" data-loading-status>Please wait.</p>
+      </section>
+
+      <section class="account-card" data-signed-out hidden aria-labelledby="sign-in-title">
+        <p class="eyebrow">Site account</p>
+        <h1 id="sign-in-title">Sign in to avijitsinha.com</h1>
+        <p>Use your Google account for a shared sign-in across participating services.</p>
+        <p class="privacy-note">This step requests basic identity only. It does not request Google Calendar or Tasks access.</p>
+        <button class="primary-button" type="button" data-sign-in>Continue with Google</button>
+        <p class="status" role="status" aria-live="polite" data-signed-out-status></p>
+      </section>
+
+      <section class="account-card" data-signed-in hidden aria-labelledby="account-title">
+        <p class="eyebrow">Site account</p>
+        <h1 id="account-title">You’re signed in</h1>
+        <p class="profile-name" data-profile-name></p>
+        <p class="profile-email" data-profile-email></p>
+        <div class="actions">
+          <a class="primary-button link-button" data-continue href="/">Continue</a>
+          <button class="secondary-button" type="button" data-logout>Sign out</button>
+        </div>
+        <p class="status" role="status" aria-live="polite" data-signed-in-status></p>
+      </section>
+
+      <section class="account-card" data-failure hidden aria-labelledby="failure-title">
+        <p class="eyebrow">Site account</p>
+        <h1 id="failure-title">Account service unavailable</h1>
+        <p data-failure-message>We couldn’t check your account right now.</p>
+        <button class="secondary-button" type="button" data-retry>Try again</button>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

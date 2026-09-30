@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account browser/session and internal validation cores implemented; browser account UI is next.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training integration is next.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
 
 ## Outcomes
 
@@ -97,7 +97,7 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 - [x] Issue the opaque host-wide session and implement `/me` and current-session logout.
 - [x] Implement exact-audience service authentication, internal session validation and Dashboard-only provider-subject matching.
 - [x] Keep beta admission restricted to the reviewed Firebase UID allowlist.
-- [ ] Add the `/account/` Firebase redirect UI that establishes the common session and calls `/me` on initialization.
+- [x] Add the `/account/` Firebase redirect UI that establishes the common session and calls `/me` on initialization.
 
 ### A3 — Service integrations
 

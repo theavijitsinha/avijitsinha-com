@@ -1,4 +1,4 @@
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { Pool } from "pg";
 import { createApp } from "./app.js";
 import { AccountController } from "./auth/controller.js";
@@ -33,6 +33,7 @@ export async function main(): Promise<void> {
   const app = createApp({
     controller,
     internal,
+    staticDirectory: fileURLToPath(new URL("../client-dist/", import.meta.url)),
     healthy: async () => {
       try {
         await pool.query("SELECT 1");

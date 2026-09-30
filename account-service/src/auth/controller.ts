@@ -172,6 +172,7 @@ export class AccountController {
         lastAuthenticatedAt: new Date(session.lastAuthenticatedAt).toISOString(),
         idleExpiresAt: new Date(session.idleExpiresAt).toISOString(),
       },
+      returnPath: this.#returnPaths.resolve(request.query.return),
     });
   }
 
