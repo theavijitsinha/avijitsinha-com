@@ -49,6 +49,8 @@ The account service never receives Calendar or Tasks refresh tokens. Routine Das
 
 Beta and production use distinct OAuth clients, redirect URIs, secrets and data stores even when they remain in the same approved Cloud project. No client secret is placed in browser configuration, source, images, shell history or policy text.
 
+The shared Google Auth Platform audience is External / In production. Google test users do not apply in that state, and the publishing status by itself neither exposes a site route nor admits a common account. During restricted beta, the account service remains the authoritative admission boundary: after Firebase verifies identity, it accepts only the exact Firebase UIDs in its secret-backed two-account allowlist and rejects all others before site-user or session persistence. Calendar still requires a separate explicit Dashboard authorization. The remaining brand, sensitive-scope verification/warning and OAuth user-cap state must be reviewed before that Calendar client is created.
+
 ## Public privacy structure
 
 The canonical policy will be served without authentication at:
