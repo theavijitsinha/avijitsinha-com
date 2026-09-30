@@ -78,6 +78,18 @@ p {
   color: #9c9ca7;
 }
 
+.privacy-note a,
+.account-footer a {
+  color: #c7d2fe;
+  text-underline-offset: 0.2em;
+}
+
+.account-footer {
+  margin: 1.25rem 0 0;
+  color: #9c9ca7;
+  font-size: 0.9rem;
+}
+
 .profile-name {
   margin-bottom: 0;
   color: #fff;

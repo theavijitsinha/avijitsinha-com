@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are implemented.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize account-service/Dashboard deployment, OAuth changes or cloud provisioning.
 
 ## Outcomes
 
@@ -53,13 +53,13 @@ The shared Google Auth Platform audience is External / In production. Google tes
 
 ## Public privacy structure
 
-The canonical policy will be served without authentication at:
+The website build serves the canonical policy without authentication at:
 
 ```text
 https://avijitsinha.com/privacy/
 ```
 
-The homepage footer, account UI and every service that handles signed-in data will link to that exact URL. The policy will have these sections:
+The homepage footer and account UI link to that exact URL. The compatible deployed Music Training release also receives an in-product link before the policy is published. The policy has these sections:
 
 1. site owner and contact channel;
 2. common account and Google sign-in data;
@@ -73,7 +73,7 @@ The homepage footer, account UI and every service that handles signed-in data wi
 
 Google's [OAuth branding requirements](https://support.google.com/cloud/answer/15549049) require the homepage and consent screen to use the same discoverable privacy URL, while the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy) requires accurate disclosure of access, use, storage and sharing. The Routine Dashboard section must say plainly that Calendar access is optional, read-only and not granted by common sign-in. A Music Training user does not grant Calendar access. Future services receive their own section before collecting data.
 
-Do not publish placeholder promises. Final policy wording follows verified account deletion, active-data deletion, backup expiry, operational-log retention and contact decisions. Until those controls exist, the canonical policy URL must not be entered in production OAuth branding as though the policy were complete.
+The initial policy makes only bounded commitments supported by the beta design: browser-local preferences remain until cleared; profile data remains while an account is active or until deletion is requested; Calendar disconnect deletes active credentials/cache/jobs even if best-effort provider revocation fails; operational logs normally retain 30 days; and hosted beta database backups may retain deleted records for up to seven days. Until automated account deletion is implemented, the published deletion path is a verified manual request to the listed operator email. Production retention can change only after its infrastructure is configured, the policy is updated and affected users receive any required notice.
 
 ## Incremental execution plan
 
@@ -112,8 +112,8 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 
 - [ ] Implement global current-session and all-session logout.
 - [ ] Implement service disconnect and global account deletion orchestration.
-- [ ] Choose and test active-data, inactive-account, log and backup retention.
-- [ ] Add the public service description, `/privacy/` and deletion instructions with matching in-product links.
+- [ ] Test the published active-data deletion, 30-day log and seven-day beta-backup retention against deployed infrastructure; production retention remains a later decision.
+- [x] Add the public service description, `/privacy/`, Google Limited Use disclosure and manual deletion instructions with matching homepage/account/Music links.
 
 ### A5 — Reviewed beta rollout
 
