@@ -1,6 +1,6 @@
 # avijitsinha.com
 
-This repository owns the public website for `avijitsinha.com`. The React/Vite build is served by nginx on Cloud Run behind the site's reverse proxy. Its unauthenticated homepage describes the available Music Training application and limited-beta Routine Dashboard, and links to the canonical policy at `/privacy/`.
+This repository owns the public website for `avijitsinha.com`. The React/Vite build is served by nginx on Cloud Run behind the site's reverse proxy. Its unauthenticated homepage describes the available Music Training application and limited-beta Routine Dashboard, and links to the live canonical policy at [`/privacy/`](https://avijitsinha.com/privacy/).
 
 The approved direction adds two site-wide responsibilities here:
 

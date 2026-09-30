@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are implemented.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize account-service/Dashboard deployment, OAuth changes or cloud provisioning.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published.** This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize account-service/Dashboard deployment, OAuth changes or cloud provisioning.
 
 ## Outcomes
 
@@ -53,7 +53,7 @@ The shared Google Auth Platform audience is External / In production. Google tes
 
 ## Public privacy structure
 
-The website build serves the canonical policy without authentication at:
+The public website serves the canonical policy without authentication at:
 
 ```text
 https://avijitsinha.com/privacy/
@@ -74,6 +74,8 @@ The homepage footer and account UI link to that exact URL. The compatible deploy
 Google's [OAuth branding requirements](https://support.google.com/cloud/answer/15549049) require the homepage and consent screen to use the same discoverable privacy URL, while the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy) requires accurate disclosure of access, use, storage and sharing. The Routine Dashboard section must say plainly that Calendar access is optional, read-only and not granted by common sign-in. A Music Training user does not grant Calendar access. Future services receive their own section before collecting data.
 
 The initial policy makes only bounded commitments supported by the beta design: browser-local preferences remain until cleared; profile data remains while an account is active or until deletion is requested; Calendar disconnect deletes active credentials/cache/jobs even if best-effort provider revocation fails; operational logs normally retain 30 days; and hosted beta database backups may retain deleted records for up to seven days. Until automated account deletion is implemented, the published deletion path is a verified manual request to the listed operator email. Production retention can change only after its infrastructure is configured, the policy is updated and affected users receive any required notice.
+
+Publication on 2026-09-30 deployed website revision `avijitsinha-com-00005-jt6` and compatible Music Training revision `music-training-00012-6v9`, each at 100% traffic with internal ingress preserved behind the existing reverse proxy. Public verification returned HTTPS `200` for the homepage and exact policy URL, rendered the policy in a real browser, confirmed its Google Limited Use and deletion disclosures, and confirmed the Music bundle contains the policy link without the prior credential-log or third-party fallback-avatar behavior. This publication did not deploy the account service or Routine Dashboard.
 
 ## Incremental execution plan
 
