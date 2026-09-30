@@ -1,0 +1,35 @@
+{
+  "name": "avijitsinha-account-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.14.0 <23",
+    "npm": ">=10 <11"
+  },
+  "packageManager": "npm@10.9.2",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "migrate": "node build/migrate.js",
+    "start": "node build/main.js",
+    "test": "vitest run tests",
+    "test:postgres": "vitest run tests/postgres.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "express": "5.2.1",
+    "firebase-admin": "14.5.0",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "24.19.0",
+    "@types/pg": "8.23.1",
+    "typescript": "7.0.2",
+    "vitest": "5.0.2"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
+  }
+}

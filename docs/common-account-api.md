@@ -1,6 +1,6 @@
 # Common account contract
 
-**Status: approved local design; not implemented or deployed.** This contract turns the common-account direction into testable browser, service and persistence boundaries. It is not authorization to provision infrastructure or change OAuth configuration.
+**Status: browser-session core implemented and verified locally; internal service API and deployment are not implemented.** The separately packaged account service now implements the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions and the PostgreSQL schema. This contract is not authorization to provision infrastructure or change OAuth configuration.
 
 ## Route ownership
 
@@ -29,7 +29,7 @@ All responses use `Cache-Control: no-store`. Error bodies contain a stable code 
 | `GET /api/account/data` | Site session | Explain common-account data and registered service deletion controls without returning credentials |
 | `DELETE /api/account` | Site session + CSRF + recent authentication + explicit confirmation | Start verified deletion across the account and every registered service |
 
-Only the first four endpoints belong to the initial implementation slice. Logout-all, data inventory and account deletion remain unavailable until their complete behavior and failure recovery are implemented.
+The first four endpoints are implemented locally. Logout-all, data inventory and account deletion remain unavailable until their complete behavior and failure recovery are implemented.
 
 The sign-in page accepts a return destination only from a server-owned allowlist of exact local application paths. The normalized destination is stored with the single-use login challenge; the callback never redirects to a browser-supplied absolute URL.
 
@@ -50,6 +50,8 @@ Every mutation requires the session, an exact allowed `Origin`, the CSRF cookie 
 The browser sends a `Path=/` cookie on requests throughout the host. The reverse proxy strips `Cookie` entirely before forwarding to static homepage or Music Training upstreams, which read account state from `/api/account/me`. It preserves the cookie only for the account service and dynamic services that validate it. Application logs and nginx access logs never record cookie or CSRF headers.
 
 ## Internal service API
+
+**Not implemented yet.** This is the next local account-service slice and remains the gate before Routine Dashboard integration.
 
 Internal requests use the service's dedicated Google-signed OIDC identity token in `Authorization: Bearer ...`. The account service verifies signature, issuer, expiry, exact configured audience, verified email and an exact allowlist of service accounts. It does not trust `X-Forwarded-*`, caller-supplied service names or public proxy headers as service identity.
 
@@ -86,7 +88,7 @@ Unknown, expired or revoked sessions receive generic `401`. A valid session with
 
 ## Persistence ownership
 
-The account service exclusively owns these PostgreSQL records:
+Migration `account-service/migrations/001_account_sessions.sql` implements the first three PostgreSQL records below in the private `account_service` schema. `service_deletion_jobs` remains deferred until deletion orchestration is implemented.
 
 | Record | Minimum fields and constraints |
 |---|---|
@@ -107,15 +109,15 @@ The account service never receives Calendar or Tasks access/refresh tokens. Comm
 
 ## Required tests before integration
 
-- login challenge expiry, replay, mismatch and consumption on denial;
-- Firebase issuer/audience/provider/expiry/revocation and recent-authentication checks;
-- beta allowlist denial before user/session persistence;
-- session fixation replacement, hash-only storage, rotation grace, idle expiry and logout;
-- exact-origin and session-bound CSRF failure for every mutation;
-- wrong issuer/audience/email, public caller and cross-service internal-operation denial;
-- no browser-visible internal/provider identifiers and no sensitive log fields;
-- Music-only sign-in creates no Calendar grant or Dashboard data;
-- Calendar subject mismatch fails without revealing either subject;
-- beta and production cookies and data cannot authenticate each other.
+- [x] login challenge expiry, replay, mismatch and consumption on denial;
+- [x] Firebase issuer/audience/provider/expiry and recent-authentication checks; live revocation uses the Admin SDK and remains an integration check;
+- [x] beta allowlist denial before user/session persistence;
+- [x] session fixation replacement, hash-only storage, rotation grace, idle expiry and logout;
+- [x] exact-origin and session-bound CSRF failure for implemented mutations;
+- [ ] wrong issuer/audience/email, public caller and cross-service internal-operation denial for the internal API;
+- [x] no browser-visible internal/provider identifiers in implemented responses and no sensitive application logging;
+- [ ] Music-only sign-in creates no Calendar grant or Dashboard data;
+- [ ] Calendar subject mismatch fails without revealing either subject;
+- [ ] beta and production cookies and data cannot authenticate each other.
 
-No service integration begins until these contracts have executable synthetic tests. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets and internal audience.
+No service integration begins until the remaining internal-boundary tests are executable. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets and internal audience.

@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: architecture and contracts approved; account-service implementation has not started.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
+**Status: local common-account browser/session core implemented; internal service validation is next.** Music Training's credential logging has been removed. This plan covers the shared account for `avijitsinha.com`, service-specific authorization, and the public privacy surface. It does not authorize deployment, OAuth changes, cloud provisioning, or publication of provisional policy text.
 
 ## Outcomes
 
@@ -87,14 +87,16 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 - [x] Specify public account endpoints, internal session validation, generic errors and profile minimization in [the account contract](common-account-api.md).
 - [x] Specify the PostgreSQL user/session schema, 30-day inactivity, rotation, revocation and CSRF behavior.
 - [x] Define service identity authentication and exact audiences for internal validation.
-- [ ] Add synthetic tests for fixation, replay, revocation, cross-service confusion and tenant spoofing.
+- [x] Add synthetic tests for fixation, replay, revocation and browser tenant-identifier spoofing.
+- [ ] Add exact-audience internal OIDC tests for public callers and cross-service confusion.
 
 ### A2 — Local account service
 
-- [ ] Add a separately deployable account service owned by this repository.
-- [ ] Reuse Firebase Google sign-in for identity only and verify ID tokens server-side.
-- [ ] Issue the opaque host-wide session and implement `/me`, logout and internal validation.
-- [ ] Keep beta admission restricted to the reviewed Firebase UID allowlist.
+- [x] Add a separately packaged account service owned by this repository.
+- [x] Reuse Firebase Google sign-in for identity only and verify ID tokens server-side.
+- [x] Issue the opaque host-wide session and implement `/me` and current-session logout.
+- [ ] Implement exact-audience service authentication and internal session validation.
+- [x] Keep beta admission restricted to the reviewed Firebase UID allowlist.
 
 ### A3 — Service integrations
 
@@ -127,6 +129,6 @@ Do not publish placeholder promises. Final policy wording follows verified accou
 
 The existing Routine Dashboard app-specific session is tested but not yet deployed. Reuse its opaque-token hashing, rotation, inactivity, CSRF, Firebase verification and tenant tests where appropriate; do not deploy it as a second competing login system. Preserve its restricted beta admission until the common account service provides an equivalent gate.
 
-Music Training currently uses persistent client-side Firebase state and has no backend authorization boundary. Its current redirect handler logs a Google credential value and must be corrected before any shared-login work. Do not treat its existing client state as the common session design.
+Music Training currently uses persistent client-side Firebase state and has no backend authorization boundary. Its former credential/identity logging and unused bearer helper have been removed, but its client state is not the common session design.
 
 No phase silently broadens Google scopes, makes Calendar mandatory, shares service tokens, weakens tenant scoping, trusts proxy identity headers, or publishes unfinished privacy claims.

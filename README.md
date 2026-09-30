@@ -11,6 +11,8 @@ Common sign-in provides identity only. Music Training does not require Calendar 
 
 See the [common account and privacy plan](docs/common-account-and-privacy.md) for the architecture and execution order, and the [common account contract](docs/common-account-api.md) for the browser API, internal validation, sessions and persistence boundary. These documents are not deployment authorization, and no provisional policy text should be published as final.
 
+The [local account service](account-service/README.md) now implements the identity-only Firebase exchange, restricted beta admission, opaque host-wide sessions, `/me`, current-session logout and its PostgreSQL schema. Internal service validation, the browser account UI, cloud resources and deployment remain separate steps.
+
 ## Local development
 
 ```sh
