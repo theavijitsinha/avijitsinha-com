@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; beta identities and empty security containers are provisioned; Terraform adoption is complete.** The protected state bucket, private sibling infrastructure repository, GitHub Actions and keyless Workload Identity Federation are configured. Apply run 36875626757 imported all 58 declared resources without cloud mutations. Pull request 2 removed the temporary label guards; apply run 36883899378 adopted seven already-matching labels, its temporary two-permission resource bindings were removed, and independent post-cleanup plan run 36884309500 reported no changes. Terraform does not use local user credentials. The next checkpoint is review of the Terraform-authored beta Cloud SQL/database batch; this plan does not authorize applying it, deploying account-service/Dashboard, adding secret values or making further OAuth changes.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; beta identities and empty security containers are provisioned; Terraform adoption is complete.** Review-only infrastructure pull request 3 defines the protected beta SQL instance, separate empty account/Dashboard databases and two CI viewer bindings. Plan run 36898116848 reports exactly five additions, no changes and no deletions; direct inspection confirms none exists. The pull request remains unmerged and Terraform still has no Cloud SQL mutation permission. This plan does not authorize applying it, deploying account-service/Dashboard, adding database users or secret values, or making further OAuth changes.
 
 ## Outcomes
 
@@ -123,7 +123,8 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 
 - [x] Reconcile existing Firebase/OAuth/cloud prerequisites with the common account design.
 - [x] Provision and adopt the least-privilege runtime/migration identities, empty secret containers and token-encryption key through the reviewed Terraform baseline.
-- [ ] Define, review and separately authorize durable database storage and secret values.
+- [x] Define and obtain a review-only five-addition plan for the protected beta SQL instance and separate empty account/Dashboard databases.
+- [ ] Separately authorize the database apply, credential bootstrap and secret values.
 - [ ] Deploy without a public route, then test the proxy, session validation and log redaction.
 - [ ] Run two-account isolation and Music-only/Calendar-connected acceptance scenarios.
 
