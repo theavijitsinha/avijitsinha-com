@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; beta identities and empty security containers are provisioned; Terraform adoption is complete.** Review-only infrastructure pull request 3 defines the protected beta SQL instance, separate empty account/Dashboard databases and two CI viewer bindings. Plan run 36898116848 reports exactly five additions, no changes and no deletions; direct inspection confirms none exists. The pull request remains unmerged and Terraform still has no Cloud SQL mutation permission. This plan does not authorize applying it, deploying account-service/Dashboard, adding database users or secret values, or making further OAuth changes.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; beta identities and empty security containers are provisioned; Terraform adoption is complete.** Infrastructure pull request 3 defines the approved sole project-wide `avijitsinha-shared-postgres` instance and separate empty account/Dashboard beta databases. Beta, production and future services reuse this instance with separate databases, roles and credentials. Plan run 36902886225 reports exactly two viewer-binding imports, three additions, no changes and no deletions; direct inspection confirms that no SQL instance exists. The user approved its staged CI apply through a temporary least-privilege role. This approval does not deploy account-service/Dashboard, add database users or secret values, or make further OAuth changes.
 
 ## Outcomes
 
@@ -123,8 +123,8 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 
 - [x] Reconcile existing Firebase/OAuth/cloud prerequisites with the common account design.
 - [x] Provision and adopt the least-privilege runtime/migration identities, empty secret containers and token-encryption key through the reviewed Terraform baseline.
-- [x] Define and obtain a review-only five-addition plan for the protected beta SQL instance and separate empty account/Dashboard databases.
-- [ ] Separately authorize the database apply, credential bootstrap and secret values.
+- [x] Define and approve the sole project-wide Cloud SQL instance plus separate empty account/Dashboard beta databases; validate a plan of two imports and three additions.
+- [ ] Execute the approved database apply, then separately authorize credential bootstrap and secret values.
 - [ ] Deploy without a public route, then test the proxy, session validation and log redaction.
 - [ ] Run two-account isolation and Music-only/Calendar-connected acceptance scenarios.
 
