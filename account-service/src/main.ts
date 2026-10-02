@@ -11,7 +11,10 @@ import { InternalAccountController } from "./internal/controller.js";
 
 export async function main(): Promise<void> {
   const configuration = loadConfiguration();
-  const pool = new Pool({ connectionString: configuration.databaseUrl, max: 10 });
+  const pool = new Pool({
+    connectionString: configuration.databaseUrl,
+    max: configuration.postgresPoolMaximum,
+  });
   const sessions = new PostgresAccountSessionStore(pool);
   const origins = new ExactOriginPolicy(configuration.allowedOrigins);
   const controller = new AccountController({

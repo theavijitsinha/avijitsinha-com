@@ -19,7 +19,7 @@ Music Training initializes its common session with `/api/account/me` and uses th
 
 ## Runtime configuration
 
-The web process requires `ACCOUNT_DATABASE_URL`, the four `ACCOUNT_FIREBASE_*` browser values, `ACCOUNT_ALLOWED_FIREBASE_UIDS`, `ACCOUNT_ALLOWED_ORIGINS`, `ACCOUNT_ALLOWED_RETURN_PATHS`, `ACCOUNT_INTERNAL_AUDIENCE` and `ACCOUNT_DASHBOARD_SERVICE_ACCOUNT_EMAIL`. Comma-separated values are parsed as exact entries. `PORT` defaults to `8080`. Production and beta must supply separate reviewed values and backing databases.
+The web process requires `ACCOUNT_DATABASE_URL`, the four `ACCOUNT_FIREBASE_*` browser values, `ACCOUNT_ALLOWED_FIREBASE_UIDS`, `ACCOUNT_ALLOWED_ORIGINS`, `ACCOUNT_ALLOWED_RETURN_PATHS`, `ACCOUNT_INTERNAL_AUDIENCE` and `ACCOUNT_DASHBOARD_SERVICE_ACCOUNT_EMAIL`. Comma-separated values are parsed as exact entries. `ACCOUNT_POSTGRES_POOL_MAX` defaults to and cannot exceed `4`, preserving capacity for Dashboard, migration and administrative connections on the shared Cloud SQL instance. `PORT` defaults to `8080`. Production and beta must supply separate reviewed values and backing databases.
 
 Run the PostgreSQL migration/session integration test against a disposable server whose configured login can create and drop databases:
 
