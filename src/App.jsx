@@ -54,7 +54,7 @@ function Home() {
             <a className='text-link' href='/music/training/intervals'>Open Music Training</a>
           </article>
           <article className='service-card'>
-            <p className='service-state'>Limited beta</p>
+            <p className='service-state'>Limited access</p>
             <h3>Routine Dashboard</h3>
             <p>
               A private schedule dashboard that can display an admitted user’s Google Calendar after

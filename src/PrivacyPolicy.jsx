@@ -19,10 +19,10 @@ function PrivacyPolicy() {
         <header className='policy-header'>
           <p className='eyebrow'>Privacy</p>
           <h1>Privacy Policy</h1>
-          <p className='policy-date'>Effective September 30, 2026</p>
+          <p className='policy-date'>Effective October 2, 2026</p>
           <p className='policy-intro'>
             This policy explains how Avijit Sinha (“I”) handles information for avijitsinha.com and
-            the services described below. Routine Dashboard is currently a limited beta. Features
+            the services described below. Routine Dashboard is currently a limited-access service. Features
             that are not available do not collect data.
           </p>
         </header>
@@ -79,7 +79,7 @@ function PrivacyPolicy() {
         <section>
           <h2>Routine Dashboard</h2>
           <p>
-            Routine Dashboard is limited to specifically admitted beta accounts. Signing in does not
+            Routine Dashboard is limited to specifically admitted accounts. Signing in does not
             connect Calendar. An admitted user must separately select <strong>Connect Google Calendar</strong>
             {' '}before the Dashboard requests read-only Calendar access. The requested Calendar scope
             cannot create, edit, or delete Google Calendar events. The Dashboard also verifies that
@@ -143,7 +143,7 @@ function PrivacyPolicy() {
             </li>
             <li>Operational logs are normally retained for 30 days.</li>
             <li>
-              When hosted beta database backups are active, deleted records may remain in encrypted
+              When hosted database backups are active, deleted records may remain in encrypted
               backups for up to seven days before those backups expire.
             </li>
           </ul>

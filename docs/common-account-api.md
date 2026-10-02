@@ -1,10 +1,10 @@
 # Common account contract
 
-**Status: browser UI, browser-session API, internal service API, Music Training integration, Routine Dashboard integration and the least-privilege account schema are implemented; the runtime service is not deployed.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. The beta runtime/migration identities, regional secret containers, shared Cloud SQL database, restricted logins, database URL secret versions, pinned migration image and protected migration job exist. The job completed the schema migration and an idempotent rerun, and a separate live audit verified the function-only runtime boundary and cross-database denial. No account Cloud Run service or route exists, and the Firebase UID admission secret remains empty because the Firebase project currently contains no user records. This contract is not authorization to weaken admission or make the service public.
+**Status: browser UI, browser-session API, internal service API, Music Training integration, Routine Dashboard integration and the least-privilege account schema are implemented; the runtime service is not deployed.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. A beta-named, fully migrated database foundation exists as verified implementation evidence, but the approved runtime target is now production-only at `avijitsinha.com`. Production-specific identities, database roles, secrets and jobs have not yet been created. No account Cloud Run service or route exists. Firebase contains one real user record; the admission secret remains empty until both approved accounts have real UIDs. This contract is not authorization to weaken admission or make the service public.
 
 ## Route ownership
 
-The account service is separately deployable but owned by this repository. The public reverse proxy exposes its browser routes on both production and beta hosts:
+The account service is separately deployable but owned by this repository. The public reverse proxy will expose its browser routes only on the production host:
 
 ```text
 /account/
@@ -13,7 +13,7 @@ The account service is separately deployable but owned by this repository. The p
 
 The proxy must reject `/internal/account/` publicly. Service backends call the account service's internal Cloud Run URL directly and authenticate as their dedicated service accounts.
 
-Production and beta use different session stores, secrets, service accounts and host-only cookies. A beta session never authenticates production.
+The legacy beta host is not an account-service or Dashboard deployment target. Host-only cookies ensure any existing Firebase browser state on that host is not a production site session.
 
 ## Browser API
 
@@ -22,7 +22,7 @@ All responses use `Cache-Control: no-store`. Error bodies contain a stable code 
 | Method and path | Authentication | Purpose |
 |---|---|---|
 | `GET /api/account/config` | Public | Return reviewed Firebase browser configuration and create one ten-minute login challenge |
-| `POST /api/account/session` | Firebase ID token + login challenge + exact origin | Verify a recent Google-backed Firebase identity, enforce beta admission, rotate any current session and set site cookies |
+| `POST /api/account/session` | Firebase ID token + login challenge + exact origin | Verify a recent Google-backed Firebase identity, enforce restricted admission, rotate any current session and set site cookies |
 | `GET /api/account/me` | Site session | Return the current user's display name, email and picture plus safe session metadata; return no internal/provider identifier |
 | `POST /api/account/logout` | Site session + CSRF + exact origin | Revoke the current session and clear its cookies |
 | `POST /api/account/logout-all` | Site session + CSRF + recent Firebase authentication | Revoke every site session for the current user |
@@ -91,7 +91,7 @@ Internal validation refreshes inactivity but deliberately does not rotate browse
 
 For `google-subjects:matches`, Routine Dashboard first verifies the Calendar ID token's signature, issuer, expiry, nonce and exact client audience. It sends only the resulting `sub` over the authenticated internal channel together with the site session. The account service returns `{ "matches": true }` or `{ "matches": false }`; neither side logs the subject. No other service may call this operation.
 
-Unknown, expired or revoked sessions receive generic `401`. A valid session with invalid origin/CSRF or a caller not permitted for the operation receives generic `403`. The response never distinguishes a missing user, mismatched provider subject or denied beta identity.
+Unknown, expired or revoked sessions receive generic `401`. A valid session with invalid origin/CSRF or a caller not permitted for the operation receives generic `403`. The response never distinguishes a missing user, mismatched provider subject or denied identity.
 
 ## Persistence ownership
 
@@ -118,7 +118,7 @@ The account service never receives Calendar or Tasks access/refresh tokens. Comm
 
 - [x] login challenge expiry, replay, mismatch and consumption on denial;
 - [x] Firebase issuer/audience/provider/expiry and recent-authentication checks; live revocation uses the Admin SDK and remains an integration check;
-- [x] beta allowlist denial before user/session persistence;
+- [x] allowlist denial before user/session persistence;
 - [x] session fixation replacement, hash-only storage, rotation grace, idle expiry and logout;
 - [x] exact-origin and session-bound CSRF failure for implemented mutations;
 - [x] wrong issuer/audience/email, public caller and cross-service internal-operation denial for the internal API;
@@ -126,6 +126,6 @@ The account service never receives Calendar or Tasks access/refresh tokens. Comm
 - [x] Music-only sign-in has no Dashboard call and therefore creates no Calendar grant or Dashboard row; the first authorized Dashboard visit creates only a minimal tenant mapping;
 - [x] Calendar subject mismatch fails without revealing either subject;
 - [x] account migration rejects wrong ownership, elevated/inherited logins and direct runtime table access before deployment;
-- [ ] beta and production cookies and data cannot authenticate each other.
+- [ ] the legacy beta host cannot establish or authenticate a production site session.
 
-Local service integration and the live database-role contract are complete. The image, credentials, migration job and schema are verified. Firebase UID admission, the private runtime service, exact internal audience and account/dashboard rollout remain separately reviewed service operations.
+Local service integration and the live beta-foundation database-role contract are complete. The image and schema behavior are verified. The next infrastructure slice creates production-specific database/identity/secret resources on the existing shared SQL instance. Firebase UID admission, the private runtime service, exact internal audience and account/dashboard rollout remain separately reviewed service operations.

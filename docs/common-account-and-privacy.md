@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; the beta database foundation is operational.** The sole project-wide `avijitsinha-shared-postgres` instance hosts isolated account and Dashboard beta databases. Restricted migration/runtime roles, four database URL secret versions, digest-pinned protected migration jobs, applied schemas, live privilege/tenant-isolation audits, bounded application pools and shared-instance disk/connection alerts are complete. Apply run 36968210411 added the alerts through a checksummed saved plan and ended with no changes; temporary create permissions were removed/deleted, and independent plan 36968350692 was empty. This work did not deploy account-service/Dashboard, populate Firebase admission or OAuth secrets, add a proxy route or make further OAuth changes.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published.** The user selected a single production deployment at `avijitsinha.com`; `beta.avijitsinha.com` is no longer a rollout target and may be retired later. The sole project-wide `avijitsinha-shared-postgres` instance and its fully verified beta-named account/Dashboard foundation remain unchanged as migration evidence. Production-specific databases, roles, identities, secrets, keys, jobs and runtime services are pending on that same instance. Firebase contains one real user record; no admission secret or OAuth secret version, account/Dashboard route, or runtime service exists.
 
 ## Outcomes
 
@@ -27,7 +27,7 @@ flowchart LR
     C --> G[Google Calendar read-only]
 ```
 
-The account service owns identity verification, the site user identifier, session rotation, inactivity expiry, current-session logout and later all-session/account deletion orchestration. It issues a host-only `__Host-` cookie with `Secure`, `HttpOnly`, `SameSite=Lax` and `Path=/`. Production and beta use host-only cookies and separate backing configuration, so a session on `beta.avijitsinha.com` is not a production session.
+The account service owns identity verification, the site user identifier, session rotation, inactivity expiry, current-session logout and later all-session/account deletion orchestration. It issues a host-only `__Host-` cookie with `Secure`, `HttpOnly`, `SameSite=Lax` and `Path=/`. The account service is exposed only on `avijitsinha.com`; the legacy beta host cannot create or use the production site session.
 
 The session token is random and opaque. Only its hash is stored. It expires after 30 consecutive days without authenticated use and rotates during active use; there is no fixed absolute logout for a regularly used session. Recent Google/Firebase authentication is still required for sensitive actions. State-changing routes require exact-origin and CSRF checks.
 
@@ -47,9 +47,9 @@ Use one Google Cloud project and one Google Auth Platform brand/audience/privacy
 
 The account service never receives Calendar or Tasks refresh tokens. Routine Dashboard owns its Calendar grant, encrypted token, normalized cache and disconnect flow. Disconnecting Calendar leaves the common site session active. Global sign-out invalidates the site session but does not silently revoke a service grant; account deletion must explicitly invoke every registered service's deletion workflow.
 
-Beta and production use distinct OAuth clients, redirect URIs, secrets and data stores even when they remain in the same approved Cloud project. No client secret is placed in browser configuration, source, images, shell history or policy text.
+Every deployed OAuth client has one exact production redirect URI, dedicated secret and service-owned data boundary in the approved Cloud project. The legacy beta host receives no new OAuth client or redirect URI. No client secret is placed in browser configuration, source, images, shell history or policy text.
 
-The shared Google Auth Platform audience is confirmed as External / In production. Google test users do not apply in that state, and the publishing status by itself neither exposes a site route nor admits a common account. During restricted beta, the account service remains the authoritative admission boundary: after Firebase verifies identity, it accepts only the exact Firebase UIDs in its secret-backed two-account allowlist and rejects all others before site-user or session persistence. Calendar still requires a separate explicit Dashboard authorization. The shared Data Access configuration declares only `openid`, `https://www.googleapis.com/auth/userinfo.email` and `https://www.googleapis.com/auth/userinfo.profile`; it does not declare Calendar or Tasks access. On 2026-09-30, the Audience page showed aggregate usage of 1 user against the 100-user cap and no verification warning. Client inventory found only the existing `music-training` Web application client; it is not silently repurposed for Dashboard Calendar authorization.
+The shared Google Auth Platform audience is confirmed as External / In production. Google test users do not apply in that state, and the publishing status by itself neither exposes a site route nor admits a common account. During the limited-access production rollout, the account service remains the authoritative admission boundary: after Firebase verifies identity, it accepts only the exact Firebase UIDs in its secret-backed two-account allowlist and rejects all others before site-user or session persistence. Calendar still requires a separate explicit Dashboard authorization. The shared Data Access configuration declares only `openid`, `https://www.googleapis.com/auth/userinfo.email` and `https://www.googleapis.com/auth/userinfo.profile`; it does not declare Calendar or Tasks access. On 2026-09-30, the Audience page showed aggregate usage of 1 user against the 100-user cap and no verification warning. Client inventory found only the existing `music-training` Web application client; it is not silently repurposed for Dashboard Calendar authorization.
 
 ## Public privacy structure
 
@@ -73,7 +73,7 @@ The homepage footer and account UI link to that exact URL. The compatible deploy
 
 Google's [OAuth branding requirements](https://support.google.com/cloud/answer/15549049) require the homepage and consent screen to use the same discoverable privacy URL, while the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy) requires accurate disclosure of access, use, storage and sharing. The Routine Dashboard section must say plainly that Calendar access is optional, read-only and not granted by common sign-in. A Music Training user does not grant Calendar access. Future services receive their own section before collecting data.
 
-The initial policy makes only bounded commitments supported by the beta design: browser-local preferences remain until cleared; profile data remains while an account is active or until deletion is requested; Calendar disconnect deletes active credentials/cache/jobs even if best-effort provider revocation fails; operational logs normally retain 30 days; and hosted beta database backups may retain deleted records for up to seven days. Until automated account deletion is implemented, the published deletion path is a verified manual request to the listed operator email. Production retention can change only after its infrastructure is configured, the policy is updated and affected users receive any required notice.
+The initial policy makes only bounded commitments supported by the design: browser-local preferences remain until cleared; profile data remains while an account is active or until deletion is requested; Calendar disconnect deletes active credentials/cache/jobs even if best-effort provider revocation fails; operational logs normally retain 30 days; and hosted database backups may retain deleted records for up to seven days. Until automated account deletion is implemented, the published deletion path is a verified manual request to the listed operator email. Retention can change only after the infrastructure is configured, the policy is updated and affected users receive any required notice.
 
 Publication on 2026-09-30 deployed website revision `avijitsinha-com-00005-jt6` and compatible Music Training revision `music-training-00012-6v9`, each at 100% traffic with internal ingress preserved behind the existing reverse proxy. Public verification returned HTTPS `200` for the homepage and exact policy URL, rendered the policy in a real browser, confirmed its Google Limited Use and deletion disclosures, and confirmed the Music bundle contains the policy link without the prior credential-log or third-party fallback-avatar behavior. This publication did not deploy the account service or Routine Dashboard.
 
@@ -102,7 +102,7 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 - [x] Reuse Firebase Google sign-in for identity only and verify ID tokens server-side.
 - [x] Issue the opaque host-wide session and implement `/me` and current-session logout.
 - [x] Implement exact-audience service authentication, internal session validation and Dashboard-only provider-subject matching.
-- [x] Keep beta admission restricted to the reviewed Firebase UID allowlist.
+- [x] Keep limited-access admission restricted to the reviewed Firebase UID allowlist.
 - [x] Add the `/account/` Firebase redirect UI that establishes the common session and calls `/me` on initialization.
 
 ### A3 — Service integrations
@@ -116,10 +116,10 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 
 - [ ] Implement global current-session and all-session logout.
 - [ ] Implement service disconnect and global account deletion orchestration.
-- [ ] Test the published active-data deletion, 30-day log and seven-day beta-backup retention against deployed infrastructure; production retention remains a later decision.
+- [ ] Test the published active-data deletion, 30-day log and seven-day backup retention against deployed production infrastructure.
 - [x] Add the public service description, `/privacy/`, Google Limited Use disclosure and manual deletion instructions with matching homepage/account/Music links.
 
-### A5 — Reviewed beta rollout
+### A5 — Verified beta-named foundation (superseded as a deployment target)
 
 - [x] Reconcile existing Firebase/OAuth/cloud prerequisites with the common account design.
 - [x] Provision and adopt the least-privilege runtime/migration identities, empty secret containers and token-encryption key through the reviewed Terraform baseline.
@@ -129,19 +129,21 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 - [x] Bootstrap restricted database roles and four database URL secret versions without placing payloads in Terraform, source or logs.
 - [x] Apply both schemas through protected, digest-pinned migration jobs; rerun them idempotently and independently audit ownership, grants, cross-database denial and forced tenant RLS.
 - [x] Bound runtime connection pools and add shared-instance disk-utilization and connection-pressure alerts through Terraform CI.
-- [ ] Populate the two-account Firebase UID admission secret after real Firebase identities exist; do not substitute emails or placeholder UIDs.
-- [ ] Deploy without a public route, then test the proxy, session validation and log redaction.
-- [ ] Run two-account isolation and Music-only/Calendar-connected acceptance scenarios.
+- [x] Preserve the verified beta-named foundation without deploying it after the production-only decision.
 
-### A6 — Production readiness
+### A6 — Production-only rollout
 
+- [ ] Create production-specific account/Dashboard databases, roles, identities, secret containers, KMS key and protected migration jobs on the existing shared SQL instance.
+- [ ] Populate the production two-account Firebase UID admission secret after both real Firebase identities exist; do not substitute emails or placeholder UIDs.
+- [ ] Deploy the account and Dashboard services privately with no proxy route; verify session, database, log-redaction and two-account isolation boundaries.
+- [ ] Route only `avijitsinha.com`; do not add account or Dashboard routes to the legacy beta host.
 - [ ] Complete applicable Google brand and sensitive-scope verification.
 - [ ] Review all policy statements against observed production configuration.
 - [ ] Deploy only after explicit authorization, monitoring, deletion and rollback checks.
 
 ## Migration constraints
 
-Routine Dashboard's undeployed app-specific session, Firebase client/Admin dependencies, login routes and hosted session tables have been removed. The account service now owns opaque-token hashing, rotation, inactivity, CSRF, Firebase verification and restricted beta admission. Dashboard forwards only the two common cookies to the exact-audience internal API and maps the returned site UUID to its own tenant.
+Routine Dashboard's undeployed app-specific session, Firebase client/Admin dependencies, login routes and hosted session tables have been removed. The account service now owns opaque-token hashing, rotation, inactivity, CSRF, Firebase verification and restricted admission. Dashboard forwards only the two common cookies to the exact-audience internal API and maps the returned site UUID to its own tenant.
 
 Music Training now reads the minimal profile from `/api/account/me`, sends sign-in through `/account/`, and revokes the current common session through the CSRF-protected account endpoint. It contains no Firebase SDK or configuration, does not handle provider credentials, and keeps only training options in browser-local storage. The reverse proxy must still strip cookies before forwarding static Music requests while routing account API calls to the account service.
 
