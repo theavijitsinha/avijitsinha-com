@@ -22,6 +22,7 @@ All responses use `Cache-Control: no-store`. Error bodies contain a stable code 
 | Method and path | Authentication | Purpose |
 |---|---|---|
 | `GET /api/account/config` | Public | Return reviewed Firebase browser configuration and create one ten-minute login challenge |
+| `GET /api/account/status` | Public | Return only aggregate service/database readiness; no account or provider data |
 | `POST /api/account/session` | Firebase ID token + login challenge + exact origin | Verify a recent Google-backed Firebase identity, enforce restricted admission, rotate any current session and set site cookies |
 | `GET /api/account/me` | Site session | Return the current user's display name, email and picture plus safe session metadata; return no internal/provider identifier |
 | `POST /api/account/logout` | Site session + CSRF + exact origin | Revoke the current session and clear its cookies |

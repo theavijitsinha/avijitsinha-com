@@ -6,8 +6,9 @@ RUN npm ci
 COPY tsconfig.json tsconfig.build.json tsconfig.client.json vite.config.ts vitest.config.ts ./
 COPY src ./src
 COPY client ./client
+COPY tests ./tests
 COPY migrations ./migrations
-RUN npm run build && npm prune --omit=dev
+RUN npm run typecheck && npm test && npm run build && npm prune --omit=dev
 
 FROM node:22.14.0-alpine3.21 AS production
 

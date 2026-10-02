@@ -13,6 +13,8 @@ The credential-free suite currently passes 38 tests, with eight live-PostgreSQL 
 
 Internal routes accept only Google-signed OIDC tokens for the exact configured audience and allowlisted service account. Routine Dashboard is currently the only registered caller. Internal validation does not rotate browser cookies; each browser application must call `/api/account/me` during initialization so active sessions receive their periodic cookie rotation.
 
+`GET /api/account/status` is the hosted database-readiness endpoint. It returns only `healthy` or `unavailable`; use it instead of `/healthz`, which Google Frontend reserves on the deployed Cloud Run path.
+
 The UI stores only the public Firebase configuration, server-normalized return path and one-time login challenge in tab-scoped session storage across the redirect. The Firebase ID token remains memory-only, is exchanged once, and Firebase client state is cleared immediately. Profile values are inserted as text rather than HTML. The packaged route sets a restrictive CSP and anti-framing, referrer, MIME-sniffing and permissions headers.
 
 Music Training initializes its common session with `/api/account/me` and uses the exact return path `/music/training/intervals`. Include that path in `ACCOUNT_ALLOWED_RETURN_PATHS` for environments that expose Music Training.

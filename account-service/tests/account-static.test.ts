@@ -49,7 +49,11 @@ describe("account static UI", () => {
       firebase: { apiKey: "key", authDomain: "example.test", projectId: "project", appId: "app" },
       allowedFirebaseUids: ["allowed-user"],
     });
-    const baseUrl = await serve(createApp({ controller, staticDirectory: directory }));
+    const baseUrl = await serve(createApp({
+      controller,
+      staticDirectory: directory,
+      healthy: async () => true,
+    }));
 
     const redirect = await fetch(`${baseUrl}/account`, { redirect: "manual" });
     expect(redirect.status).toBe(308);
@@ -62,6 +66,18 @@ describe("account static UI", () => {
     expect(page.headers.get("referrer-policy")).toBe("no-referrer");
     expect(page.headers.get("x-content-type-options")).toBe("nosniff");
     expect(page.headers.get("x-frame-options")).toBe("DENY");
+
+    const status = await fetch(`${baseUrl}/api/account/status`);
+    expect(status.status).toBe(200);
+    expect(await status.json()).toEqual({ status: "healthy" });
+
+    const unavailableBaseUrl = await serve(createApp({
+      controller,
+      healthy: async () => false,
+    }));
+    const unavailable = await fetch(`${unavailableBaseUrl}/api/account/status`);
+    expect(unavailable.status).toBe(503);
+    expect(await unavailable.json()).toEqual({ status: "unavailable" });
 
     const asset = await fetch(`${baseUrl}/account/app.js`);
     expect(asset.status).toBe(200);
