@@ -21,9 +21,8 @@ function PrivacyPolicy() {
           <h1>Privacy Policy</h1>
           <p className='policy-date'>Effective October 2, 2026</p>
           <p className='policy-intro'>
-            This policy explains how Avijit Sinha (“I”) handles information for avijitsinha.com and
-            the services described below. Routine Dashboard is currently a limited-access service. Features
-            that are not available do not collect data.
+            This policy explains how Avijit Sinha (“I”) handles information for avijitsinha.com
+            and Music Training. Features that are not available do not collect data.
           </p>
         </header>
 
@@ -45,23 +44,22 @@ function PrivacyPolicy() {
             requested path, referring page, timestamps, response status, latency, and security or
             diagnostic events. There are no third-party advertising or behavioral-analytics trackers.
             Operational logs are normally retained for 30 days and are not intended to contain Google
-            tokens, account identifiers, email addresses, or Calendar contents.
+            credentials, account identifiers, or email addresses.
           </p>
 
-          <h3>Google sign-in and the site account</h3>
+          <h3>Optional Google sign-in</h3>
           <p>
-            Services that offer Google sign-in use Google Sign-In and Firebase Authentication. They
-            may receive a stable Google/Firebase account identifier, email address, display name,
-            profile picture, and authentication metadata. This information is used only to verify
-            identity, maintain the signed-in experience, show the account profile, protect user data,
-            and respond to support or security issues. I do not receive your Google password.
+            Music Training offers optional Google sign-in through Google Sign-In and Firebase
+            Authentication. Google and Firebase may process a stable account identifier, email address,
+            display name, profile picture, and authentication metadata. The application uses this
+            information only to maintain and display the signed-in experience. I do not receive your
+            Google password, and Music Training does not send your signed-in identity to an application
+            database.
           </p>
           <p>
-            Common sign-in requests basic identity only. It does not grant access to Google Calendar
-            or Google Tasks. Depending on the service release, authentication state is maintained by
-            Firebase in the browser or by random secure session cookies; server-side session values
-            are stored only as cryptographic hashes. Site sessions expire after 30 consecutive days
-            without authenticated use and may rotate while actively used.
+            Sign-in requests basic identity only. It does not grant access to Google Calendar or Google
+            Tasks. Firebase maintains authentication state in the browser and may retain an authentication
+            user record in the site's Firebase project.
           </p>
         </section>
 
@@ -70,60 +68,34 @@ function PrivacyPolicy() {
           <p>
             Music Training uses browser storage for practice settings such as interval choices,
             direction, and timing. Those settings remain on the device unless you clear browser data.
-            The exercises and audio are generated in the browser. If you use Google sign-in, Music
-            Training uses only the basic identity information described above. It does not request,
-            receive, store, or use Google Calendar or Google Tasks data.
-          </p>
-        </section>
-
-        <section>
-          <h2>Routine Dashboard</h2>
-          <p>
-            Routine Dashboard is limited to specifically admitted accounts. Signing in does not
-            connect Calendar. An admitted user must separately select <strong>Connect Google Calendar</strong>
-            {' '}before the Dashboard requests read-only Calendar access. The requested Calendar scope
-            cannot create, edit, or delete Google Calendar events. The Dashboard also verifies that
-            the connected Calendar account belongs to the signed-in Google identity.
-          </p>
-          <p>
-            When connected, Routine Dashboard reads the event fields needed to display and synchronize
-            a schedule, including title, start and end, all-day state, status, event type, availability,
-            recurrence relationships, and the signed-in user’s own response status. Event descriptions
-            may be read transiently to interpret Dashboard display directives, but the descriptions,
-            attendee identities, conference details, and raw Google responses are not retained.
-          </p>
-          <p>
-            The Dashboard stores encrypted authorization credentials, user preferences, connection and
-            synchronization state, and a normalized cache of the event fields needed by the interface.
-            Google Calendar remains the authoritative source. Calendar data is used only to provide the
-            signed-in user’s Dashboard and is isolated from every other user. Google Tasks integration
-            is not currently available, so no Google Tasks data is requested or collected.
+            Exercises and audio are generated in the browser. If you use Google sign-in, Music Training
+            uses only the basic identity information described above. It does not request, receive,
+            store, or use Google Calendar or Google Tasks data.
           </p>
         </section>
 
         <section>
           <h2>Cookies and browser storage</h2>
           <p>
-            Essential cookies may be used for secure sessions, cross-site-request-forgery protection,
-            and short-lived Google authorization state. They are not used for advertising. Participating
-            applications may use browser storage for local preferences and temporary sign-in state.
-            Blocking essential storage can prevent sign-in or saved settings from working.
+            Firebase Authentication may use cookies or browser storage for temporary and persistent
+            sign-in state. Music Training uses browser storage for local practice preferences. This
+            storage is not used for advertising. Blocking or clearing it can sign you out or remove
+            saved settings.
           </p>
         </section>
 
         <section>
           <h2>How information is used and shared</h2>
           <p>
-            Information is used to provide the requested service, authenticate users, synchronize and
-            display authorized data, maintain security, diagnose failures, and respond to user requests.
-            It is not sold, used for advertising, provided to data brokers, or used to train advertising
-            or artificial-intelligence models.
+            Information is used to provide the requested service, authenticate users, maintain security,
+            diagnose failures, and respond to user requests. It is not sold, used for advertising,
+            provided to data brokers, or used to train advertising or artificial-intelligence models.
           </p>
           <p>
-            Google and Google Cloud process information as providers of authentication, APIs, hosting,
-            databases, encryption, and related infrastructure. Information may also be disclosed when
-            required by law or when reasonably necessary to investigate abuse or protect users and the
-            services. No other sharing is permitted except with the user’s direction or consent.
+            Google and Google Cloud process information as providers of authentication, hosting, and
+            related infrastructure. Information may also be disclosed when required by law or when
+            reasonably necessary to investigate abuse or protect users and the services. No other
+            sharing is permitted except with the user's direction or consent.
           </p>
           <p className='limited-use'>
             The use and transfer to any other app of information received from Google APIs will adhere
@@ -135,42 +107,32 @@ function PrivacyPolicy() {
           <h2>Retention and deletion</h2>
           <ul>
             <li>Browser-local preferences remain until you clear them or the application replaces them.</li>
-            <li>Account profile data remains while the account is active or until deletion is requested.</li>
-            <li>
-              Routine Dashboard keeps current normalized Calendar data while Calendar is connected.
-              Disconnecting Calendar removes its local authorization credentials, synchronization jobs,
-              and active Calendar cache, even if Google revocation is temporarily unavailable.
-            </li>
+            <li>Firebase authentication records remain until they are deleted or the Firebase project removes them.</li>
             <li>Operational logs are normally retained for 30 days.</li>
-            <li>
-              When hosted database backups are active, deleted records may remain in encrypted
-              backups for up to seven days before those backups expire.
-            </li>
           </ul>
           <p>
-            To request access to or deletion of account and service data, email{' '}
+            To request deletion of a Firebase authentication record or other service data, email{' '}
             <a href='mailto:theavijitsinha@gmail.com?subject=Data%20deletion%20request'>
               theavijitsinha@gmail.com
             </a>{' '}
             with the subject “Data deletion request.” I may ask you to verify control of the relevant
-            Google account before acting. Active data will be removed after verification, subject to
-            the backup window above and any limited retention required for security or law.
+            Google account before acting. You can remove practice settings directly by clearing this
+            site's browser data.
           </p>
           <p>
-            You can also revoke this site’s Google access from your{' '}
+            You can also revoke this site's Google access from your{' '}
             <a href='https://myaccount.google.com/connections' target='_blank' rel='noreferrer'>
               Google Account connections
-            </a>. Revoking at Google stops future access but does not by itself clear browser-local
-            preferences or data already cached by a service; use the service’s disconnect control or
-            contact me for deletion.
+            </a>. Revoking at Google stops future sign-in access but does not clear browser-local
+            practice settings.
           </p>
         </section>
 
         <section>
           <h2>Security</h2>
           <p>
-            Safeguards include HTTPS, secure cookies where applicable, least-privilege service identities,
-            per-user authorization controls, encrypted Google credentials, and separation of each user’s
+            Safeguards include HTTPS, restrictive browser security headers, provider-managed
+            authentication, and avoiding server-side storage of Music Training identity or practice
             data. No security measure can guarantee absolute protection, but access is limited to what
             is needed to operate, support, secure, or legally comply with the services.
           </p>

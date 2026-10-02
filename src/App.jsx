@@ -14,8 +14,8 @@ function Home() {
           <p className='eyebrow'>avijitsinha.com</p>
           <h1 id='home-title'>Small tools for practice and planning.</h1>
           <p className='lede'>
-            Personal web applications built by Avijit Sinha. Google sign-in provides identity;
-            additional permissions are requested only when a service feature needs them.
+            Personal web applications built by Avijit Sinha. Music Training offers optional Google
+            sign-in and keeps practice settings in your browser.
           </p>
         </div>
         <div className='hero-art' aria-hidden='true'>
@@ -52,14 +52,6 @@ function Home() {
               never requests access to Google Calendar or Tasks.
             </p>
             <a className='text-link' href='/music/training/intervals'>Open Music Training</a>
-          </article>
-          <article className='service-card'>
-            <p className='service-state'>Limited access</p>
-            <h3>Routine Dashboard</h3>
-            <p>
-              A private schedule dashboard that can display an admitted user’s Google Calendar after
-              a separate, explicit read-only authorization. Calendar access is not part of sign-in.
-            </p>
           </article>
         </div>
       </section>
