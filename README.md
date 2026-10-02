@@ -4,6 +4,8 @@ This repository owns the public website for `avijitsinha.com`. The React/Vite bu
 
 Music Training has optional standalone Google sign-in through the site's existing Firebase project. It stores practice preferences in the browser and does not request Google Calendar or Tasks access. The former common account service and hosted Routine Dashboard have been retired; their source remains available in Git history rather than the current website tree.
 
+Production website revision `avijitsinha-com-00006-nmh` publishes this simplified homepage and privacy policy. The public reverse proxy returns `404` for the retired Account and hosted Dashboard routes.
+
 ## Local development
 
 ```sh
