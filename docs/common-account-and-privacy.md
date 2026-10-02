@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; beta identities, empty security containers and shared Cloud SQL are provisioned; Terraform adoption is complete.** Apply run 36904434429 imported two viewer bindings and created the sole project-wide `avijitsinha-shared-postgres` instance plus separate empty account/Dashboard beta databases. Beta, production and future services reuse this instance with separate databases, roles and credentials. The run completed exactly two imports and three additions, then reported no changes; its temporary role was removed/deleted, and independent plan 36906154456 was empty. This rollout did not deploy account-service/Dashboard, add application database logins or secret values, or make further OAuth changes.
+**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published; the beta database foundation is operational.** The sole project-wide `avijitsinha-shared-postgres` instance hosts isolated account and Dashboard beta databases. Restricted migration/runtime roles, four database URL secret versions, digest-pinned protected migration jobs, applied schemas, live privilege/tenant-isolation audits, bounded application pools and shared-instance disk/connection alerts are complete. Apply run 36968210411 added the alerts through a checksummed saved plan and ended with no changes; temporary create permissions were removed/deleted, and independent plan 36968350692 was empty. This work did not deploy account-service/Dashboard, populate Firebase admission or OAuth secrets, add a proxy route or make further OAuth changes.
 
 ## Outcomes
 
@@ -126,7 +126,10 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 - [x] Define and approve the sole project-wide Cloud SQL instance plus separate empty account/Dashboard beta databases; validate a plan of two imports and three additions.
 - [x] Execute the approved database apply, remove its temporary role and prove an independent zero-change plan.
 - [x] Harden the account migration job for the shared instance and verify its exact function-only runtime grants against PostgreSQL 17.
-- [ ] Separately authorize database credential bootstrap and secret values.
+- [x] Bootstrap restricted database roles and four database URL secret versions without placing payloads in Terraform, source or logs.
+- [x] Apply both schemas through protected, digest-pinned migration jobs; rerun them idempotently and independently audit ownership, grants, cross-database denial and forced tenant RLS.
+- [x] Bound runtime connection pools and add shared-instance disk-utilization and connection-pressure alerts through Terraform CI.
+- [ ] Populate the two-account Firebase UID admission secret after real Firebase identities exist; do not substitute emails or placeholder UIDs.
 - [ ] Deploy without a public route, then test the proxy, session validation and log redaction.
 - [ ] Run two-account isolation and Music-only/Calendar-connected acceptance scenarios.
 
