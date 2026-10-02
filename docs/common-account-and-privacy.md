@@ -125,6 +125,7 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 - [x] Provision and adopt the least-privilege runtime/migration identities, empty secret containers and token-encryption key through the reviewed Terraform baseline.
 - [x] Define and approve the sole project-wide Cloud SQL instance plus separate empty account/Dashboard beta databases; validate a plan of two imports and three additions.
 - [x] Execute the approved database apply, remove its temporary role and prove an independent zero-change plan.
+- [x] Harden the account migration job for the shared instance and verify its exact function-only runtime grants against PostgreSQL 17.
 - [ ] Separately authorize database credential bootstrap and secret values.
 - [ ] Deploy without a public route, then test the proxy, session validation and log redaction.
 - [ ] Run two-account isolation and Music-only/Calendar-connected acceptance scenarios.

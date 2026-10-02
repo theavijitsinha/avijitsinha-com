@@ -1,6 +1,6 @@
 # Common account contract
 
-**Status: browser UI, browser-session API, internal service API, Music Training integration and Routine Dashboard integration are implemented and verified locally; deployment is not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. The beta runtime/migration identities and empty regional secret containers are provisioned, but no database, secret value, image, service or route exists. This contract is not authorization for the remaining infrastructure or OAuth changes.
+**Status: browser UI, browser-session API, internal service API, Music Training integration, Routine Dashboard integration and a least-privilege account migration job are implemented and verified locally; deployment is not implemented.** The separately packaged account service implements `/account/`, the first four browser endpoints, Firebase claim validation, restricted admission, opaque sessions, exact-audience service authentication, recent-auth enforcement, match-only provider binding and the PostgreSQL schema. The beta runtime/migration identities, empty regional secret containers, shared Cloud SQL instance and empty account database are provisioned, but no application database role, secret value, image, service or route exists. This contract is not authorization for the remaining infrastructure or OAuth changes.
 
 ## Route ownership
 
@@ -104,7 +104,7 @@ Migration `account-service/migrations/001_account_sessions.sql` implements the f
 | `login_challenges` | Challenge hash; normalized return path; created/expiry/consumed timestamps |
 | `service_deletion_jobs` | User ID; registered service; opaque operation ID; state/attempt timestamps, added only with account deletion |
 
-The runtime database role has no migration, role-management or broad administrative privilege. Prefer narrow functions for pre-identity challenge/session lookup and deletion orchestration, with a separate migration identity. No service account or dashboard database role can read account tables directly.
+The runtime database role has no migration, role-management, inherited or broad administrative privilege. It receives only schema usage and execution on the seven narrow definer functions; it has no direct table, sequence, public-schema or migration-history access. The distinct migration login owns the account database but has no superuser, database/role creation, replication, RLS-bypass, inheritance or parent-role privilege. The non-interactive migration command validates both roles before schema changes and configures only database-local object grants afterward. No service account or Dashboard database role can read account tables directly.
 
 Routine Dashboard stores `site_user_id` as a unique external tenant mapping in its own database boundary. It keeps preferences, Calendar OAuth state/tokens, cache, sync state and jobs there. Music Training initially stores only its existing browser-local training options and has no service database. A Music-only account therefore creates no Dashboard Calendar connection, token, cache or job.
 
@@ -125,6 +125,7 @@ The account service never receives Calendar or Tasks access/refresh tokens. Comm
 - [x] no browser-visible internal/provider identifiers in implemented responses and no sensitive application logging;
 - [x] Music-only sign-in has no Dashboard call and therefore creates no Calendar grant or Dashboard row; the first authorized Dashboard visit creates only a minimal tenant mapping;
 - [x] Calendar subject mismatch fails without revealing either subject;
+- [x] account migration rejects wrong ownership, elevated/inherited logins and direct runtime table access before deployment;
 - [ ] beta and production cookies and data cannot authenticate each other.
 
-Local service integration is complete. Cloud provisioning waits for a separate review of the account-service identity, database role, secrets, internal audience and account/dashboard rollout order.
+Local service integration and the database-role contract are complete. Live credential bootstrap, secret values, image, service, internal audience and account/dashboard rollout remain separately reviewed operations.

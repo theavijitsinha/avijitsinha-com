@@ -9,7 +9,7 @@ npm ci
 npm run check
 ```
 
-The 27 credential-free tests use an in-memory store and synthetic Firebase/OIDC claims. They cover account-page initialization, redirect exchange, server-normalized continuation, logout, generic failures and static security headers without contacting Firebase, Google or PostgreSQL. Production startup requires explicit Firebase, origin, admission, internal audience, Dashboard service-account and database configuration; it fails closed when any required value is absent.
+The 30 credential-free tests use an in-memory store and synthetic Firebase/OIDC claims. They cover account-page initialization, redirect exchange, server-normalized continuation, logout, generic failures, migration configuration and static security headers without contacting Firebase, Google or PostgreSQL. Production startup requires explicit Firebase, origin, admission, internal audience, Dashboard service-account and database configuration; it fails closed when any required value is absent.
 
 Internal routes accept only Google-signed OIDC tokens for the exact configured audience and allowlisted service account. Routine Dashboard is currently the only registered caller. Internal validation does not rotate browser cookies; each browser application must call `/api/account/me` during initialization so active sessions receive their periodic cookie rotation.
 
@@ -27,10 +27,16 @@ Run the PostgreSQL migration/session integration test against a disposable serve
 TEST_ACCOUNT_POSTGRES_URL=postgresql://... npm run test:postgres
 ```
 
-Apply migrations with a separate database owner connection:
+Apply migrations with the separate database-owner connection and the pre-provisioned runtime login name:
 
 ```sh
-ACCOUNT_MIGRATION_DATABASE_URL=postgresql://... npm run migrate
+ACCOUNT_MIGRATION_DATABASE_URL=postgresql://... \
+ACCOUNT_POSTGRES_RUNTIME_LOGIN=avijitsinha_account_beta_runtime \
+npm run migrate
 ```
 
-The runtime role must receive only `USAGE` on the `account_service` schema and `EXECUTE` on its seven API functions. It must not own or receive direct access to the account tables. The keyless beta runtime identity and shared migration identity now exist. Empty, region-pinned containers separately hold the future account runtime URL, migration URL and Firebase UID allowlist; each has only its intended identity as accessor. No secret version, database role, database or service deployment exists yet.
+An administrator must create both logins before this command runs. The migration login owns the account database but is `NOINHERIT`, non-superuser, non-`CREATEDB`, non-`CREATEROLE`, non-replicating, non-RLS-bypass and has no parent role. The runtime login has the same restrictions, does not own the database and has no parent role. The command validates those facts before any schema change; it never creates or alters cluster-wide roles.
+
+After checksum-verified migrations succeed, the command removes public access and grants runtime only `USAGE` on the private `account_service` schema plus `EXECUTE` on its seven API functions. Runtime receives no direct table, sequence, public-schema or migration-table access. Eight PostgreSQL 17 integration cases verify the session schema plus fresh/repeated migration, exact function grants, direct-table denial, wrong-owner rejection, migration/runtime elevation rejection and failed-migration behavior.
+
+The keyless beta runtime identity and shared migration identity now exist, as do the shared Cloud SQL instance and empty `avijitsinha_account_beta` database. Empty, region-pinned containers separately hold the future account runtime URL, migration URL and Firebase UID allowlist; each has only its intended identity as accessor. No application database role, secret version or service deployment exists yet.
