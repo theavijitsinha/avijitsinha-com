@@ -20,6 +20,17 @@ describe("account migration configuration", () => {
     })).toThrow(/ACCOUNT_POSTGRES_RUNTIME_LOGIN/);
   });
 
+  it("accepts a Cloud SQL Unix-socket connection URL with no network host", () => {
+    const databaseUrl = "postgresql://account_migrator:secret@/account?host=%2Fcloudsql%2Fproject%3Aregion%3Ainstance&sslmode=disable";
+    expect(loadAccountMigrationConfiguration({
+      ...validEnvironment,
+      ACCOUNT_MIGRATION_DATABASE_URL: databaseUrl,
+    })).toEqual({
+      databaseUrl,
+      runtimeLogin: validEnvironment.ACCOUNT_POSTGRES_RUNTIME_LOGIN,
+    });
+  });
+
   it("rejects non-PostgreSQL, unsafe and shared runtime configuration", () => {
     expect(() => loadAccountMigrationConfiguration({
       ...validEnvironment,

@@ -1,5 +1,6 @@
 import { pathToFileURL } from "node:url";
 import { Pool } from "pg";
+import { parse as parsePostgresConnectionString } from "pg-connection-string";
 import { configureRuntimePrivileges, quoteRoleIdentifier, validateDeploymentRoles } from "./storage/deployment.js";
 import { applyMigrations, loadMigrations, type Migration } from "./storage/migrations.js";
 
@@ -19,12 +20,12 @@ export function loadAccountMigrationConfiguration(
 ): AccountMigrationConfiguration {
   const databaseUrl = requiredEnvironmentValue(environment, "ACCOUNT_MIGRATION_DATABASE_URL");
   const runtimeLogin = requiredEnvironmentValue(environment, "ACCOUNT_POSTGRES_RUNTIME_LOGIN");
-  const parsedUrl = new URL(databaseUrl);
-  if (parsedUrl.protocol !== "postgres:" && parsedUrl.protocol !== "postgresql:") {
+  if (!/^postgres(?:ql)?:\/\//.test(databaseUrl)) {
     throw new Error("The account migration database URL must use PostgreSQL");
   }
+  const parsedConnection = parsePostgresConnectionString(databaseUrl);
   quoteRoleIdentifier(runtimeLogin);
-  if (parsedUrl.username && decodeURIComponent(parsedUrl.username) === runtimeLogin) {
+  if (parsedConnection.user === runtimeLogin) {
     throw new Error("The account migration and runtime logins must be different");
   }
   return { databaseUrl, runtimeLogin };
