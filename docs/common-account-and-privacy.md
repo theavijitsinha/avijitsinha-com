@@ -1,6 +1,6 @@
 # Common account and privacy plan
 
-**Status: local common-account UI, browser/session and internal validation cores implemented; Music Training and Routine Dashboard both consume the common account locally; the public services homepage and canonical privacy policy are published.** The user selected a single production deployment at `avijitsinha.com`; `beta.avijitsinha.com` is no longer a rollout target and may be retired later. The sole project-wide `avijitsinha-shared-postgres` instance and its fully verified beta-named account/Dashboard foundation remain unchanged as migration evidence. Production-specific databases, roles, identities, secrets, keys, jobs and runtime services are pending on that same instance. Both approved Firebase identities now exist, but their UIDs were not retained and no admission secret or OAuth secret version, account/Dashboard route, or runtime service exists.
+**Status: the common-account UI, browser/session and internal validation cores are deployed; Music Training and Routine Dashboard both consume the production common account; the public services homepage and canonical privacy policy are published.** The user selected a single production deployment at `avijitsinha.com`; `beta.avijitsinha.com` is no longer a rollout target and may be retired later. The sole project-wide `avijitsinha-shared-postgres` instance hosts separate production account and Dashboard databases, roles and secret-backed credentials. The account and Dashboard runtimes are deployed behind the production reverse proxy, and the two approved Firebase identities are admitted without exposing their UIDs. The retained beta-named foundation remains unchanged as migration evidence. The only absent production secret version is the dedicated Dashboard Calendar OAuth client; Calendar connection and scheduled synchronization remain disabled until it is installed and verified.
 
 ## Outcomes
 
@@ -133,13 +133,15 @@ The user then confirmed that the shared Google Auth Platform app name `avijitsin
 
 ### A6 — Production-only rollout
 
-- [ ] Create production-specific account/Dashboard databases, roles, identities, secret containers, KMS key and protected migration jobs on the existing shared SQL instance.
-- [ ] Populate the production two-account Firebase UID admission secret after both real Firebase identities exist; do not substitute emails or placeholder UIDs.
-- [ ] Deploy the account and Dashboard services privately with no proxy route; verify session, database, log-redaction and two-account isolation boundaries.
-- [ ] Route only `avijitsinha.com`; do not add account or Dashboard routes to the legacy beta host.
+- [x] Create production-specific account/Dashboard databases, roles, identities, secret containers, KMS key and protected migration jobs on the existing shared SQL instance.
+- [x] Populate the production two-account Firebase UID admission secret after both real Firebase identities exist; do not substitute emails or placeholder UIDs.
+- [x] Deploy the account and Dashboard services without a public proxy route first; verify database, internal identity and aggregate readiness boundaries before routing.
+- [x] Route only `avijitsinha.com`; do not add account or Dashboard routes to the legacy beta host.
 - [ ] Complete applicable Google brand and sensitive-scope verification.
 - [ ] Review all policy statements against observed production configuration.
-- [ ] Deploy only after explicit authorization, monitoring, deletion and rollback checks.
+- [x] Deploy the identity-only production slice after explicit authorization, monitoring and rollback checks.
+- [ ] Install the dedicated Dashboard OAuth client secret and deploy the authenticated Calendar sync scheduler.
+- [ ] Complete two-user browser acceptance for common sign-in, tenant isolation, Calendar connect/disconnect and read-only event synchronization.
 
 ## Migration constraints
 
